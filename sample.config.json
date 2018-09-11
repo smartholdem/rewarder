@@ -1,9 +1,11 @@
 {
   "node": "127.0.0.1",
-  "secret": "",
+  "delegate": "DelegateName",
+  "secret": "DelegateSecretPhrase",
   "port": 3007,
+  "rewardPercent": 80,
   "payPeriod": "0 01 0 * * *",
-  "voteMin": 10,
-  "voteMinDays": 1,
+  "voterWeightMin": 10,
+  "voterDaysMin": 1,
   "log": "rewarder.log"
 }
