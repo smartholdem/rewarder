@@ -1,2 +1,34 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+<h1>{{title}} - {{delegate.username}}</h1>
+
+<p>Rate: {{delegate.rate}}</p>
+<p>Produced blocks: {{delegate.producedblocks}}</p>
+<p>Approval: {{delegate.approval}}%</p>
+<p>Minimum vote weight: {{minvote}} STH</p>
+<p>Minimum vote age: {{voterDaysMin}} Days</p>
+<p>Current Voter Reward: {{rewardpercent}}%</p>
+<p>Current Forging: {{forgingMilestone}} STH</p>
+<p>Distribution Forging: {{distribution}} STH</p>
+<p>Next Reward Distribution: dd/mm/YYYY H:i:s</p>
+<hr/>
+<table>
+    <tr>
+        <th>Address</th>
+        <th>Weight</th>
+        <th>Vote</th>
+        <th>Reward</th>
+    </tr>
+    {{#each voters}}
+        <tr>
+            <td>{{address}}</td>
+            <td>{{balance}}</td>
+            <td>{{percent}}%</td>
+            <td>~{{reward}}</td>
+        </tr>
+    {{/each}}
+    <tr>
+        <td>Total:</td>
+        <td>{{total}}</td>
+        <td></td>
+        <td></td>
+    </tr>
+</table>

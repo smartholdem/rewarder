@@ -6,3 +6,8 @@ body {
 a {
   color: #00B7FF;
 }
+
+table tr td {
+  border-bottom: solid 1px #ccc;
+  padding: 10px;
+}

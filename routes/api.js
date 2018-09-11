@@ -21,7 +21,14 @@ router.get('/voters', function(req, res, next) {
     smartholdemApi.getVoters(PUBKEY, (error, success, response) => {
         res.json(response);
     });
-
 });
+
+router.get('/delegate/:name', function(req, res, next) {
+        smartholdemApi.getDelegate(req.params["name"], (error, success, response) => {
+            res.json(response);
+        });
+});
+
+
 
 module.exports = router;

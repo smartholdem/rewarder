@@ -50,6 +50,7 @@ var server = http.createServer(app);
 app.listen(PORT, () => {
     smartholdemApi.setPreferredNode(PREFERRED_NODE);
     smartholdemApi.init("main"); //main or dev
+
     /*
     smartholdemApi.getVoters(PUBKEY, (error, success, response) => {
         console.log(response);
