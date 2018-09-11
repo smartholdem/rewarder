@@ -1,25 +1,24 @@
 #!/usr/bin/env node
+const fs = require("fs");
 const nconf = require("nconf");
 const smartholdemApi = require("sthjs-wrapper");
 const sth = require("sthjs");
 const moment = require("moment");
 const util = require("../api/util");
 
-nconf.argv().file("./config.json");
-LOG_FILE = nconf.get("log");
+nconf.argv().file("../config.json");
+LOG_FILE = "../" + nconf.get("log");
 const PREFERRED_NODE = nconf.get("node");
 const PASSPHRASE = nconf.get("secret");
-
+const PORT = nconf.get("port");
 if(!PASSPHRASE)
 {
     console.log("Please enter the SmartHoldem Delegate passphrase");
     process.exit(1);
 }
 
-const ADDR = sth.crypto.getAddress(sth.crypto.getKeys(PASSPHRASE).publicKey);
-
-smartholdemApi.init("main"); //main or dev
-smartholdemApi.setPreferredNode(PREFERRED_NODE);
+const PUBKEY = sth.crypto.getKeys(PASSPHRASE).publicKey;
+const ADDR = sth.crypto.getAddress(PUBKEY);
 
 /**
  * Module dependencies.
@@ -33,7 +32,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || nconf.get("port"));
+var port = normalizePort(process.env.PORT || PORT);
 app.set('port', port);
 
 /**
@@ -46,14 +45,25 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+// server.listen(port);
 
-app.listen(port, () => {
-    const PAYPERIOD = nconf.get("payperiod");
-    console.log(fs.readFileSync("./art.txt", "utf8"));
-    util.log(`Server started on port ${port} date:` + moment().toISOString() + "\r\n");
-    util.log(`SmartHoldem Rewarder Address: ${ADDR}, STH-Node: ${PREFERRED_NODE}` + "\r\n");
-    // sthWorker.startScheduler(FREQUENCY, STH_ADDR, PASSPHRASE);
+app.listen(PORT, () => {
+    smartholdemApi.setPreferredNode(PREFERRED_NODE);
+    smartholdemApi.init("main"); //main or dev
+    /*
+    smartholdemApi.getVoters(PUBKEY, (error, success, response) => {
+        console.log(response);
+    });
+*/
+
+    const PAY_PERIOD = nconf.get("payPeriod");
+    console.log(fs.readFileSync("../art.txt", "utf8"));
+    util.log(`Server started on port ${PORT} date:` + moment().toISOString() + "\r\n");
+    util.log(`SmartHoldem Rewarder Address: ${ADDR}, Node: ${PREFERRED_NODE}` + "\r\n");
+
+
+
+    // sthWorker.startScheduler(PAY_PERIOD, ADDR, PASSPHRASE);
 });
 
 server.on('error', onError);

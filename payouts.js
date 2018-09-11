@@ -1,8 +1,16 @@
 const fs = require("fs");
-
 const scheduler = require("node-schedule");
-const nconf = require("nconf");
-
-nconf.argv().file("config.json");
+const util = require("./api/util");
 
 
+
+exports.startScheduler = (threshold, cronJob, passphrase, secondPassphrase = null) => {
+    console.log(`Automatic payouts scheduled: ${cronJob}`);
+
+
+
+
+    var paySchedule = scheduler.scheduleJob(cronJob, () => {
+
+    });
+};
