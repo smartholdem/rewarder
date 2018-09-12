@@ -51,7 +51,7 @@ var server = http.createServer(app);
 app.listen(PORT, () => {
     smartholdemApi.setPreferredNode(PREFERRED_NODE);
     smartholdemApi.init("main"); //main or dev
-    const REWARD_PERIOD = "* * * */" + nconf.get("rewardPeriodDays") + " * *";
+    const REWARD_PERIOD = "* * * /" + nconf.get("rewardPeriodDays") + " * *";
     console.log(fs.readFileSync("../art.txt", "utf8"));
     util.log(`Server started on port ${PORT} date:` + moment().toISOString() + "\r\n");
     util.log(`SmartHoldem Rewarder Address: ${ADDR}, Node: ${PREFERRED_NODE}` + "\r\n");
