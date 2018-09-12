@@ -5,6 +5,7 @@ const smartholdemApi = require("sthjs-wrapper");
 const sth = require("sthjs");
 const moment = require("moment");
 const util = require("../api/util");
+const payouts = require("../payouts");
 
 nconf.argv().file("../config.json");
 LOG_FILE = "../" + nconf.get("log");
@@ -50,21 +51,18 @@ var server = http.createServer(app);
 app.listen(PORT, () => {
     smartholdemApi.setPreferredNode(PREFERRED_NODE);
     smartholdemApi.init("main"); //main or dev
-
-    /*
-    smartholdemApi.getVoters(PUBKEY, (error, success, response) => {
-        console.log(response);
-    });
-*/
-
-    const PAY_PERIOD = nconf.get("payPeriod");
+    const REWARD_PERIOD = "* * * */" + nconf.get("rewardPeriodDays") + " * *";
     console.log(fs.readFileSync("../art.txt", "utf8"));
     util.log(`Server started on port ${PORT} date:` + moment().toISOString() + "\r\n");
     util.log(`SmartHoldem Rewarder Address: ${ADDR}, Node: ${PREFERRED_NODE}` + "\r\n");
-
-
-
-    // sthWorker.startScheduler(PAY_PERIOD, ADDR, PASSPHRASE);
+    payouts.startScheduler(REWARD_PERIOD, {
+        "pass": PASSPHRASE,
+        "pubKey": PUBKEY,
+        "node": PREFERRED_NODE,
+        "delegate": nconf.get("delegate"),
+        "percent": nconf.get("rewardPercent"),
+        "minvote": nconf.get("voterWeightMin") * 100000000
+    });
 });
 
 server.on('error', onError);

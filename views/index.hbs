@@ -1,16 +1,16 @@
 <h1>{{title}} - {{delegate.username}}</h1>
 
-<p>Rate: {{delegate.rate}}</p>
-<p>Produced blocks: {{delegate.producedblocks}}</p>
-<p>Approval: {{delegate.approval}}%</p>
-<p>Address: {{delegate.address}}</p>
-<p>Total forged: {{totalForged}}</p>
+<p>Delegate Rate: {{delegate.rate}}</p>
+<p>Delegate Produced blocks: {{delegate.producedblocks}}</p>
+<p>Delegate Approval: {{delegate.approval}}%</p>
+<p>Delegate Address: {{delegate.address}}</p>
+<p>Delegate Total forged: {{totalForged}}</p>
 <p>Minimum vote weight: {{minvote}} STH</p>
 <p>Minimum vote age: {{voterDaysMin}} Days</p>
 <p>Current Voter Reward: {{rewardpercent}}%</p>
-<p>Current Forging: {{forgingMilestone}} STH</p>
-<p>Distribution Forging: {{distribution}} STH</p>
-<p>Next Reward Distribution: dd/mm/YYYY H:i:s</p>
+<p>Current Forging Period: {{forgingMilestone}} STH</p>
+<p>Distribution Forging Period: {{distribution}} STH</p>
+<p>Next Reward Voters Distribution: {{nextReward}}</p>
 <hr/>
 <table>
     <tr>
@@ -18,12 +18,14 @@
         <th>Weight</th>
         <th>Vote</th>
         <th>Reward</th>
+        <th>Comment</th>
     </tr>
     {{#each voters}}
         <tr>
             <td>{{address}}</td>
             <td>{{balance}}</td>
             <td>{{percent}}%</td>
+            <td>~{{reward}}</td>
             <td>~{{reward}}</td>
         </tr>
     {{/each}}

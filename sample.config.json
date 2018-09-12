@@ -4,8 +4,9 @@
   "secret": "DelegateSecretPhrase",
   "port": 3007,
   "rewardPercent": 80,
-  "payPeriod": "0 01 0 * * *",
+  "rewardPeriodDays": 7,
   "voterWeightMin": 10,
   "voterDaysMin": 1,
-  "log": "rewarder.log"
+  "log": "rewarder.log",
+  "startedForging": 0
 }
