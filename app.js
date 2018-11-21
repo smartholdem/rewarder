@@ -5,7 +5,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const fs = require('fs');
 const nconf = require("nconf");
+
 const jsonfile = require('jsonfile');
+const appConfig = jsonfile.readFileSync('./config.json'); // конфиг
+
+process.env.PORT = appConfig.port;
+console.log("Running on port:", process.env.PORT);
 
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
@@ -13,12 +18,10 @@ var apiRouter = require('./routes/api');
 var forgingConfig = jsonfile.readFileSync("../forged.json");
 
 var app = express();
-// nconf.argv().file("config.json");
-// let currDate = new Date(Date.now()).toLocaleString();
 
 if (forgingConfig.lastDatePayments === 0) {
     forgingConfig.lastDatePayments = Date.now();
-    jsonfile.writeFile("../forged.json", forgingConfig, function (err) {
+    jsonfile.writeFile("./forged.json", forgingConfig, function (err) {
         if (err) console.error(err)
     })
 }
@@ -29,7 +32,7 @@ app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 app.disable("x-powered-by");
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -38,19 +41,19 @@ app.use('/', indexRouter);
 app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.use(function (req, res, next) {
+    next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function (err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 module.exports = app;
