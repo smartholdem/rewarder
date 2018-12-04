@@ -49,7 +49,7 @@ var server = http.createServer(app);
 // server.listen(port);
 
 app.listen(PORT, () => {
-    smartholdemApi.setPreferredNode(PREFERRED_NODE);
+
     smartholdemApi.init("main"); //main or dev
     const REWARD_PERIOD = "* * * /" + nconf.get("rewardPeriodDays") + " * *";
     console.log(fs.readFileSync("../art.txt", "utf8"));
