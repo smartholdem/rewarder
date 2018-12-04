@@ -22,6 +22,7 @@ const dbGetKey = (key) => {
     });
 };
 
+
 if (!rConfig.secret) {
     util.log("Please enter the SmartHoldem Delegate passphrase");
     process.exit(1);
@@ -46,13 +47,12 @@ function getVoters() {
             reject(false);
         });
     });
-
 }
 
 /* API ROUTES */
 
 /* GET votes >= voterWeightMin */
-router.get('/voters/get', function (req, res, next) {
+router.get('/voters/getFromBlockchain', function (req, res, next) {
     getVoters().then(function (data) {
         res.json(data);
     });
@@ -65,18 +65,38 @@ router.get('/delegate/:name', function (req, res, next) {
     });
 });
 
+
+router.get('/voters/getFromDb', function (req, res, next) {
+    getVoters().then(function (data) {
+        res.json(data);
+    });
+});
+
 /* Update votes db */
 router.post('/voters/update', function (req, res, next) {
     if (rConfig.appKey === req.headers['x-api-key']) {
-        dbGetKey('0x' + response.accounts[i].address).then(function (data) {
-            activeVoters.push(data);
-        }, function (newVoter) {
-            let activeVoter = {
-                "address": response.accounts[i].address,
-                "balance": response.accounts[i].balance,
-                "timestamp": Date.now(),
-            };
+        getVoters().then(function (data) {
+            for (let i=0; i < data.length; i++) {
+                console.log(data[i]);
+                dbGetKey('0x' + data[i].address).then(function (dbVote) {
+                    if (dbVote.balance < (rConfig.voterWeightMin * 10 ** 8)) {
+                        db.del('0x' + data[i].address);
+                    } else {
+                        dbVote.balance = data[i].balance;
+                        db.put('0x' + data[i].address, dbVote);
+                    }
+                }, function (newVoter) {
+                    db.put('0x' + data[i].address, {
+                        "address":  data[i].address,
+                        "balance":  data[i].balance,
+                        "timestamp": Date.now(),
+                    });
+
+                });
+            }
         });
+
+
         res.json(true);
     } else {
         res.json(false);
