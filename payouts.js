@@ -4,11 +4,11 @@ const BigNumber = require("bignumber.js");
 const scheduler = require("node-schedule");
 const util = require("./api/util");
 const request = require("request");
-const level = require("level");
+//const level = require("level");
 const jsonfile = require('jsonfile');
 const forgedFile = "./forged.json";
 var forgingConfig = jsonfile.readFileSync(forgedFile);
-const db = level('.db', {valueEncoding: 'json'});
+//const db = level('.db', {valueEncoding: 'json'});
 
 const getTotalForged = function (node, pubKey, callback) {
     let url = 'http://' + node + ':6100/api/delegates/forging/getForgedByAccount?generatorPublicKey=' + pubKey;
