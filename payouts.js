@@ -6,7 +6,7 @@ const util = require("./api/util");
 const request = require("request");
 const level = require("level");
 const jsonfile = require('jsonfile');
-const forgedFile = "../forged.json";
+const forgedFile = "./forged.json";
 var forgingConfig = jsonfile.readFileSync(forgedFile);
 const db = level('.db', {valueEncoding: 'json'});
 
