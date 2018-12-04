@@ -15,7 +15,7 @@ console.log("Running on port:", process.env.PORT);
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
 
-var forgingConfig = jsonfile.readFileSync("../forged.json");
+var forgingConfig = jsonfile.readFileSync("./forged.json");
 
 var app = express();
 
