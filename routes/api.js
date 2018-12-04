@@ -1,25 +1,30 @@
 var express = require('express');
 var router = express.Router();
-const nconf = require("nconf");
 const smartholdemApi = require("sthjs-wrapper");
 const sth = require("sthjs");
+const jsonReader = require('jsonfile');
+const util = require("../api/util");
+const rConfig = jsonReader.readFileSync("./config.json");
 
-
-nconf.argv().file("./config.json");
-const PASSPHRASE = nconf.get("secret");
-if(!PASSPHRASE)
+if(!rConfig.secret)
 {
-    console.log("Please enter the SmartHoldem Delegate passphrase");
+    util.log("Please enter the SmartHoldem Delegate passphrase");
     process.exit(1);
 }
 
-const PUBKEY = sth.crypto.getKeys(PASSPHRASE).publicKey;
+const PUB_KEY = sth.crypto.getKeys(rConfig.secret).publicKey;
 
 
 /* GET users listing. */
 router.get('/voters', function(req, res, next) {
-    smartholdemApi.getVoters(PUBKEY, (error, success, response) => {
-        res.json(response);
+    let activeVoters = [];
+    smartholdemApi.getVoters(PUB_KEY, (error, success, response) => {
+        for (let i=0; i < response.accounts.length; i++) {
+            if (response.accounts[i].balance >= rConfig.voterWeightMin) {
+                activeVoters.push(response.accounts[i]);
+            }
+        }
+        res.json(activeVoters);
     });
 });
 
