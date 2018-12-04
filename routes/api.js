@@ -37,16 +37,9 @@ function getVoters() {
         smartholdemApi.getVoters(PUB_KEY, (error, success, response) => {
             if (!error) {
                 for (let i = 0; i < response.accounts.length; i++) {
-                    if (response.accounts[i].balance / (10 ** 8) >= rConfig.voterWeightMin) {
-
-                        dbGetKey('0x' + response.accounts[i].address).then(function (data) {
-
-                        }, function (newVoter) {
-
-                        });
-
-                        activeVoters.push(response.accounts[i]);
-                    }
+                    //if (response.accounts[i].balance / (10 ** 8) >= rConfig.voterWeightMin) {
+                    activeVoters.push({"address":response.accounts[i].address, "balance": response.accounts[i].balance});
+                    //}
                 }
                 resolve(activeVoters);
             }
@@ -59,7 +52,7 @@ function getVoters() {
 /* API ROUTES */
 
 /* GET votes >= voterWeightMin */
-router.get('/voters', function (req, res, next) {
+router.get('/voters/get', function (req, res, next) {
     getVoters().then(function (data) {
         res.json(data);
     });
@@ -71,5 +64,24 @@ router.get('/delegate/:name', function (req, res, next) {
         res.json(response);
     });
 });
+
+/* Update votes db */
+router.post('/voters/update', function (req, res, next) {
+    if (rConfig.appKey === req.headers['x-api-key']) {
+        dbGetKey('0x' + response.accounts[i].address).then(function (data) {
+            activeVoters.push(data);
+        }, function (newVoter) {
+            let activeVoter = {
+                "address": response.accounts[i].address,
+                "balance": response.accounts[i].balance,
+                "timestamp": Date.now(),
+            };
+        });
+        res.json(true);
+    } else {
+        res.json(false);
+    }
+});
+
 
 module.exports = router;
