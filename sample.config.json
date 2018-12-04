@@ -2,11 +2,10 @@
   "node": "127.0.0.1",
   "delegate": "DelegateName",
   "secret": "DelegateSecretPhrase",
-  "port": 3007,
   "rewardPercent": 80,
-  "rewardPeriodDays": 7,
-  "voterWeightMin": 10,
+  "rewardPeriodDays": 1,
+  "voterWeightMin": 100,
   "voterDaysMin": 1,
   "log": "rewarder.log",
-  "startedForging": 0
+  "frontServer": "127.0.0.1"
 }
