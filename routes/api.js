@@ -5,7 +5,7 @@ const smartholdemApi = require("sthjs-wrapper");
 const sth = require("sthjs");
 
 
-nconf.argv().file("../config.json");
+nconf.argv().file("./config.json");
 const PASSPHRASE = nconf.get("secret");
 if(!PASSPHRASE)
 {
@@ -28,7 +28,5 @@ router.get('/delegate/:name', function(req, res, next) {
             res.json(response);
         });
 });
-
-
 
 module.exports = router;
