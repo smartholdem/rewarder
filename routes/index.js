@@ -7,7 +7,7 @@ const smartholdemApi = require("sthjs-wrapper");
 const sth = require("sthjs");
 const request = require("request");
 
-nconf.argv().file("../config.json");
+nconf.argv().file("./config.json");
 
 const voterWeightMin = nconf.get("voterWeightMin") * 100000000;
 const PASSPHRASE = nconf.get("secret");
@@ -15,7 +15,7 @@ const rewardPercent = nconf.get("rewardPercent");
 const delegate = nconf.get("delegate");
 const voterDaysMin = nconf.get("voterDaysMin");
 
-var startedForging = jsonfile.readFileSync("../forged.json");
+var startedForging = jsonfile.readFileSync("./forged.json");
 const PREFERRED_NODE = nconf.get("node");
 if (!PASSPHRASE) {
     console.log("Please enter the SmartHoldem Delegate passphrase");
