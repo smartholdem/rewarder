@@ -14,7 +14,7 @@ exports.reject = (res, status, msg) => {
 exports.log = (msg, async) => {
     console.log(msg);
     if (async)
-        fs.appendFile(LOG_FILE, msg);
+        fs.appendFile("./rewarder.log", msg);
     else
-        fs.appendFileSync(LOG_FILE, msg);
+        fs.appendFileSync("./rewarder.log", msg);
 };
