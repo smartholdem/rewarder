@@ -45,18 +45,18 @@ function statsUpdate() {
             "accept": "application/json"
         }
     }, function (err, res, body) {
-        console.log(body);
         if (!err) {
             dbGetKey('1xSTATS').then(function (stat) {
-                if (body.forged > stat.startedForgingAmount) {
-                    stat.totalRewardAmount = body.forged - stat.startedForgingAmount;
-                    db.put('1xSTATS', stat);
-                }
+                stat.totalRewardAmount = body.forged - stat.startedForgingAmount;
+                stat.timestamp = Date.now();
+                db.put('1xSTATS', stat);
                 stats = stat;
             }, function (newStats) {
                 db.put('1xSTATS', {
                     "startedForgingAmount": body.forged,
-                    "totalRewardAmount": 0
+                    "totalRewardAmount": 0,
+                    "timestamp": Date.now(),
+                    "timestampFirstStart": Date.now(),
                 });
             });
         }
@@ -93,7 +93,7 @@ function compareValues(key, order = 'asc') {
     };
 }
 
-
+// get all voters current delegate from chain
 function getVoters() {
     let activeVoters = [];
     return new Promise((resolve, reject) => {
@@ -176,7 +176,14 @@ router.post('/voters/update', function (req, res, next) {
 });
 
 
-
+/* Get Active Voters from LevelDb */
+router.get('/db/stats', function (req, res, next) {
+    dbGetKey('1xSTATS').then(function (data) {
+        res.json(data);
+    }, function (newStats) {
+        res.json(false);
+    });
+});
 
 
 module.exports = router;
