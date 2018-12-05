@@ -3,8 +3,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const fs = require('fs');
-const nconf = require("nconf");
 
 const jsonfile = require('jsonfile');
 const appConfig = jsonfile.readFileSync('./config.json'); // конфиг
@@ -14,17 +12,7 @@ console.log("Running on port:", process.env.PORT);
 
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
-
-var forgingConfig = jsonfile.readFileSync("./forged.json");
-
 var app = express();
-
-if (forgingConfig.lastDatePayments === 0) {
-    forgingConfig.lastDatePayments = Date.now();
-    jsonfile.writeFile("./forged.json", forgingConfig, function (err) {
-        if (err) console.error(err)
-    })
-}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

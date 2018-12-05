@@ -121,7 +121,7 @@ function getVoters() {
 /* API ROUTES */
 
 statsUpdate(function(data){
-   console.log(data);
+  // console.log(data);
 });
 
 /* GET votes >= voterWeightMin */
