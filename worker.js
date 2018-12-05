@@ -7,6 +7,7 @@ const rConfig = jsonReader.readFileSync("./config.json");
 
 util.log("Worker started:" + 'http://127.0.0.1:' + rConfig.port);
 
+// recalculations cron
 let workSchedule = scheduler.scheduleJob("1 1 */1 * * *", () => {
 
 function workerRequest(apiPath, callback) {
@@ -82,6 +83,8 @@ workerRequest('/api/worker/stats-update', function (dataStats) {
                     }
                 }, function (errUpdate, resUdate, bodyUpdate) {
                     if (!errUpdate) {
+                        bodyUpdate.reward = bodyUpdate.reward / 10 ** 8;
+                        bodyUpdate.balance = bodyUpdate.balance / 10 ** 8;
                         console.log(bodyUpdate);
                     }
                 });

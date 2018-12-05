@@ -214,14 +214,17 @@ router.post('/worker/update-reward', function (req, res, next) {
 
 /* Get Active Voters from LevelDb */
 router.get('/db/stats', function (req, res, next) {
-    dbGetKey('1xSTATS').then(function (data) {
-        data.totalRewardAmount = data.totalRewardAmount / 10 ** 8;
-        data.startedForgedAmount = data.startedForgedAmount / 10 ** 8;
-        data.currentForgedAmount = data.currentForgedAmount / 10 ** 8;
-        res.json(data);
-    }, function (newStats) {
-        res.json(false);
+    statsUpdate(function(data){
+        dbGetKey('1xSTATS').then(function (data) {
+            data.totalRewardAmount = data.totalRewardAmount / 10 ** 8;
+            data.startedForgedAmount = data.startedForgedAmount / 10 ** 8;
+            data.currentForgedAmount = data.currentForgedAmount / 10 ** 8;
+            res.json(data);
+        }, function (newStats) {
+            res.json(false);
+        });
     });
+
 });
 
 
