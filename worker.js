@@ -71,6 +71,22 @@ workerRequest('/api/worker/stats-update', function (dataStats) {
             console.log('reward div',reward / 10 ** 8);
             console.log('totalRewards',totalRewards);
 
+            for (let i=0; i < rewardsVoters.length; i++) {
+                request({
+                    method: 'post',
+                    json: true, // Use,If you are sending JSON data
+                    url: 'http://127.0.0.1:' + rConfig.port + '/worker/update-reward',
+                    body: {"address":rewardsVoters[i].address},
+                    headers: {
+                        "accept": "application/json",
+                        "x-api-key": rConfig.appKey
+                    }
+                }, function (errUpdate, resUdate, bodyUpdate) {
+                    if (!errUpdate) {
+                        console.log(bodyUpdate);
+                    }
+                });
+            }
 
         });
 
