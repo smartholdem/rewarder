@@ -228,5 +228,14 @@ router.get('/db/stats', function (req, res, next) {
 
 });
 
+router.post('/db/add-record', function (req, res, next) {
+    if (rConfig.appKey === req.headers['x-api-key']) {
+        db.put(req.body.key, req.body.value).then(function(err, data){
+            res.json(data);
+        });
+    }
+});
+
+
 
 module.exports = router;
