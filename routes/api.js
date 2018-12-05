@@ -48,12 +48,14 @@ function statsUpdate() {
         if (!err) {
             dbGetKey('1xSTATS').then(function (stat) {
                 stat.totalRewardAmount = body.forged - stat.startedForgingAmount;
+                stat.currentForgingAmount = body.forged;
                 stat.timestamp = Date.now();
                 db.put('1xSTATS', stat);
                 stats = stat;
             }, function (newStats) {
                 db.put('1xSTATS', {
                     "startedForgingAmount": body.forged,
+                    "currentForgingAmount": body.forged,
                     "totalRewardAmount": 0,
                     "timestamp": Date.now(),
                     "timestampFirstStart": Date.now(),
@@ -179,6 +181,7 @@ router.post('/voters/update', function (req, res, next) {
 /* Get Active Voters from LevelDb */
 router.get('/db/stats', function (req, res, next) {
     dbGetKey('1xSTATS').then(function (data) {
+        data.totalRewardAmount = data.totalRewardAmount / 10 ** 8;
         res.json(data);
     }, function (newStats) {
         res.json(false);
