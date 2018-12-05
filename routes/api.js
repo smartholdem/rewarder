@@ -275,6 +275,7 @@ router.post('/stats/cleanup', function (req, res, next) {
             }
         });
     }
+    res.json(true);
 });
 
 
