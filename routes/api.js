@@ -61,6 +61,7 @@ function statsUpdate(callback) {
                         "startedForgedAmount": body.forged,
                         "currentForgedAmount": body.forged,
                         "totalRewardAmount": 0,
+                        "totalPayout": 0,
                         "timestampUpdate": Date.now(),
                         "timestampFirstStart": Date.now(),
                     });
@@ -267,6 +268,7 @@ router.post('/stats/cleanup', function (req, res, next) {
             if (!err) {
                 dbGetKey('1xSTATS').then(function (stat) {
                     stat.totalRewardAmount = 0;
+                    stat.totalPayout = stat.totalPayout + req.body.totalPayout * 1;
                     stat.startedForgedAmount = stat.startedForgedAmount * 1 + req.body.totalPayout * 1;
                     stat.timestampUpdate = Date.now();
                     db.put('1xSTATS', stat);
