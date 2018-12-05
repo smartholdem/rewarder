@@ -9,6 +9,17 @@ const level = require("level");
 const db = level('./.db', {valueEncoding: 'json'});
 
 // 0x - Voters
+// 1x - Stats
+
+if (!rConfig.secret) {
+    util.log("Please enter the SmartHoldem Delegate passphrase");
+    process.exit(1);
+}
+
+const PUB_KEY = sth.crypto.getKeys(rConfig.secret).publicKey;
+
+/* API FUNCTIONS */
+
 
 // get db keys / values
 const dbGetKey = (key) => {
@@ -21,6 +32,40 @@ const dbGetKey = (key) => {
         });
     });
 };
+var stats;
+
+function statsUpdate() {
+    request({
+        method: 'get',
+        json: true, // Use,If you are sending JSON data
+        url: 'http://' + rConfig.node + ':6100/api/delegates/forging/getForgedByAccount?generatorPublicKey=' + PUB_KEY,
+        body: {},
+        headers: {
+            "accept": "application/json"
+        }
+    }, function (err, res, body) {
+        console.log(body);
+        if (!err) {
+            dbGetKey('1xSTATS').then(function (stat) {
+                if (body.forged > stat.startedForgingAmount) {
+                    stat.totalRewardAmount = body.forged - stat.startedForgingAmount;
+                    db.put('1xSTATS', stat);
+                }
+                stats = stat;
+            }, function (newStats) {
+                db.put('1xSTATS', {
+                    "startedForgingAmount": body.forged,
+                    "totalRewardAmount": 0
+                });
+            });
+        }
+
+    });
+}
+
+db.on('put', function (key, value) {
+    console.log('inserted', {key, value})
+});
 
 // function for dynamic sorting
 function compareValues(key, order = 'asc') {
@@ -47,14 +92,6 @@ function compareValues(key, order = 'asc') {
     };
 }
 
-if (!rConfig.secret) {
-    util.log("Please enter the SmartHoldem Delegate passphrase");
-    process.exit(1);
-}
-
-const PUB_KEY = sth.crypto.getKeys(rConfig.secret).publicKey;
-
-/* API FUNCTIONS */
 
 function getVoters() {
     let activeVoters = [];
@@ -62,9 +99,10 @@ function getVoters() {
         smartholdemApi.getVoters(PUB_KEY, (error, success, response) => {
             if (!error) {
                 for (let i = 0; i < response.accounts.length; i++) {
-                    //if (response.accounts[i].balance / (10 ** 8) >= rConfig.voterWeightMin) {
-                    activeVoters.push({"address":response.accounts[i].address, "balance": response.accounts[i].balance});
-                    //}
+                    activeVoters.push({
+                        "address": response.accounts[i].address,
+                        "balance": response.accounts[i].balance
+                    });
                 }
                 resolve(activeVoters);
             }
@@ -74,6 +112,8 @@ function getVoters() {
 }
 
 /* API ROUTES */
+
+statsUpdate();
 
 /* GET votes >= voterWeightMin */
 router.get('/voters/getFromChain', function (req, res, next) {
@@ -89,7 +129,7 @@ router.get('/delegate/:name', function (req, res, next) {
     });
 });
 
-
+/* Get Active Voters from LevelDb */
 router.get('/voters/getFromDb', function (req, res, next) {
     let list = [];
     db.createReadStream({gte: '0x', lt: '1x', "limit": 500})
@@ -105,14 +145,13 @@ router.get('/voters/getFromDb', function (req, res, next) {
 router.post('/voters/update', function (req, res, next) {
     if (rConfig.appKey === req.headers['x-api-key']) {
         getVoters().then(function (data) {
-            for (let i=0; i < data.length; i++) {
+            for (let i = 0; i < data.length; i++) {
                 console.log(data[i]);
                 dbGetKey('0x' + data[i].address).then(function (dbVote) {
                     if (data[i].balance < (rConfig.voterWeightMin * 10 ** 8)) {
                         db.del('0x' + data[i].address);
                     } else {
                         dbVote.balance = data[i].balance;
-                        dbVote.reward = 0;
                         db.put('0x' + data[i].address, dbVote);
                     }
                 }, function (newVoter) {
@@ -122,8 +161,6 @@ router.post('/voters/update', function (req, res, next) {
                             "balance": data[i].balance,
                             "reward": 0,
                             "timestamp": Date.now(),
-                        }).then(function (value) {
-                            console.log(value)
                         });
                     }
                 });
@@ -136,6 +173,9 @@ router.post('/voters/update', function (req, res, next) {
         res.json(false);
     }
 });
+
+
+
 
 
 module.exports = router;
