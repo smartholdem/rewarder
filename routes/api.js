@@ -57,7 +57,7 @@ function statsUpdate() {
                     "startedForgedAmount": body.forged,
                     "currentForgedAmount": body.forged,
                     "totalRewardAmount": 0,
-                    "timestamp": Date.now(),
+                    "timestampUpdate": Date.now(),
                     "timestampFirstStart": Date.now(),
                 });
             });
