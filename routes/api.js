@@ -49,7 +49,7 @@ function statsUpdate() {
             dbGetKey('1xSTATS').then(function (stat) {
                 stat.totalRewardAmount = body.forged - stat.startedForgedAmount;
                 stat.currentForgedAmount = body.forged;
-                stat.timestamp = Date.now();
+                stat.timestampUpdate = Date.now();
                 db.put('1xSTATS', stat);
                 stats = stat;
             }, function (newStats) {
