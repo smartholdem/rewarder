@@ -53,18 +53,24 @@ workerRequest('/api/worker/stats-update', function (dataStats) {
             }
 
             let rewardsVoters = [];
+            let totalRewards = 0;
             for (let i=0; i < body.length; i++) {
-                let percent = (100 / totalWeight * body[i].balance).toFixed(8) * 1;
+                let percent = (100 / totalWeight * body[i].balance).toFixed(4) * 1;
+                let currentReward = Math.floor(reward * percent / 100) / 10 ** 8;
+                totalRewards = totalRewards + currentReward;
                 rewardsVoters.push({
                     "address": body[i].address,
                     "personalPercent": percent,
                     "balance": body[i].balance / 10 ** 8,
-                    "currentReward": Math.floor(reward * percent / 100) / 10 ** 8
+                    "currentReward": currentReward
                 });
             }
 
-            console.log(reward);
+
             console.log(rewardsVoters);
+            console.log('reward div',reward / 10 ** 8);
+            console.log('totalRewards',totalRewards);
+
 
         });
 
