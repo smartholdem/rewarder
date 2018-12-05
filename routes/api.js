@@ -35,7 +35,8 @@ const dbGetKey = (key) => {
 };
 var stats;
 
-function statsUpdate() {
+function statsUpdate(callback) {
+
     request({
         method: 'get',
         json: true, // Use,If you are sending JSON data
@@ -45,29 +46,31 @@ function statsUpdate() {
             "accept": "application/json"
         }
     }, function (err, res, body) {
-        if (!err) {
-            dbGetKey('1xSTATS').then(function (stat) {
-                stat.totalRewardAmount = body.forged - stat.startedForgedAmount;
-                stat.currentForgedAmount = body.forged;
-                stat.timestampUpdate = Date.now();
-                db.put('1xSTATS', stat);
-                stats = stat;
-            }, function (newStats) {
-                db.put('1xSTATS', {
-                    "startedForgedAmount": body.forged,
-                    "currentForgedAmount": body.forged,
-                    "totalRewardAmount": 0,
-                    "timestampUpdate": Date.now(),
-                    "timestampFirstStart": Date.now(),
-                });
-            });
-        }
 
-    });
+            if (!err) {
+                dbGetKey('1xSTATS').then(function (stat) {
+                    stat.totalRewardAmount = body.forged - stat.startedForgedAmount;
+                    stat.currentForgedAmount = body.forged;
+                    stat.timestampUpdate = Date.now();
+                    db.put('1xSTATS', stat);
+                    stats = stat;
+                    return callback(stats);
+                }, function (newStats) {
+                    db.put('1xSTATS', {
+                        "startedForgedAmount": body.forged,
+                        "currentForgedAmount": body.forged,
+                        "totalRewardAmount": 0,
+                        "timestampUpdate": Date.now(),
+                        "timestampFirstStart": Date.now(),
+                    });
+                });
+            }
+        });
+    // return callback(stats);
 }
 
 db.on('put', function (key, value) {
-    console.log('inserted', {key, value})
+   // console.log('inserted', {key, value})
 });
 
 // function for dynamic sorting
@@ -116,7 +119,9 @@ function getVoters() {
 
 /* API ROUTES */
 
-statsUpdate();
+statsUpdate(function(data){
+   console.log(data);
+});
 
 /* GET votes >= voterWeightMin */
 router.get('/voters/getFromChain', function (req, res, next) {
@@ -135,21 +140,23 @@ router.get('/delegate/:name', function (req, res, next) {
 /* Get Active Voters from LevelDb */
 router.get('/voters/getFromDb', function (req, res, next) {
     let list = [];
+    let totalAmount = 0;
     db.createReadStream({gte: '0x', lt: '1x', "limit": 500})
         .on('data', function (data) {
             list.push(data.value);
+            totalAmount = totalAmount + data.value.balance * 1;
         })
         .on('end', function () {
             res.json(list.sort(compareValues('balance', 'desc')));
         });
 });
 
-/* Update votes db */
-router.post('/voters/update', function (req, res, next) {
+/* Update worker votes db */
+router.post('/worker/voters-update', function (req, res, next) {
     if (rConfig.appKey === req.headers['x-api-key']) {
         getVoters().then(function (data) {
             for (let i = 0; i < data.length; i++) {
-                console.log(data[i]);
+                // console.log(data[i]);
                 dbGetKey('0x' + data[i].address).then(function (dbVote) {
                     if (data[i].balance < (rConfig.voterWeightMin * 10 ** 8)) {
                         db.del('0x' + data[i].address);
@@ -159,18 +166,18 @@ router.post('/voters/update', function (req, res, next) {
                     }
                 }, function (newVoter) {
                     if (data[i].balance >= (rConfig.voterWeightMin * 10 ** 8)) {
-                        db.put('0x' + data[i].address, {
+                        let addVoter = {
                             "address": data[i].address,
                             "balance": data[i].balance,
                             "reward": 0,
                             "timestamp": Date.now(),
-                        });
+                        };
+                        db.put('0x' + data[i].address, addVoter);
                     }
                 });
             }
+
         });
-
-
         res.json(true);
     } else {
         res.json(false);
@@ -178,10 +185,27 @@ router.post('/voters/update', function (req, res, next) {
 });
 
 
+router.post('/worker/stats-update', function (req, res, next) {
+    if (rConfig.appKey === req.headers['x-api-key']) {
+        statsUpdate(function(data) {
+            res.json(data);
+        });
+    }
+});
+
+// voter update reward
+router.post('/worker/voter-reward', function (req, res, next) {
+    if (rConfig.appKey === req.headers['x-api-key']) {
+        res.json(true);
+    }
+});
+
 /* Get Active Voters from LevelDb */
 router.get('/db/stats', function (req, res, next) {
     dbGetKey('1xSTATS').then(function (data) {
         data.totalRewardAmount = data.totalRewardAmount / 10 ** 8;
+        data.startedForgedAmount = data.startedForgedAmount / 10 ** 8;
+        data.currentForgedAmount = data.currentForgedAmount / 10 ** 8;
         res.json(data);
     }, function (newStats) {
         res.json(false);
