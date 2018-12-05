@@ -4,8 +4,8 @@ const BigNumber = require("bignumber.js");
 const scheduler = require("node-schedule");
 const util = require("./api/util");
 const request = require("request");
-const jsonfile = require('jsonfile');
-const forgedFile = "./forged.json";
+const jsonReader = require('jsonfile');
+const rConfig = jsonReader.readFileSync("./config.json");
 
 var doPayout = (options) => {
     util.log("==Payout Begin==");

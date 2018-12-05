@@ -11,6 +11,7 @@ const db = level('./.db', {valueEncoding: 'json'});
 
 // 0x - Voters
 // 1x - Stats
+// 2x - Payouts
 
 if (!rConfig.secret) {
     util.log("Please enter the SmartHoldem Delegate passphrase");
