@@ -228,7 +228,7 @@ router.get('/db/stats', function (req, res, next) {
 
 });
 
-router.post('/db/add-record', function (req, res, next) {
+router.post('/db/put', function (req, res, next) {
     if (rConfig.appKey === req.headers['x-api-key']) {
         db.put(req.body.key, req.body.value).then(function(err, data){
             res.json(data);
@@ -236,6 +236,46 @@ router.post('/db/add-record', function (req, res, next) {
     }
 });
 
+
+/* Get Active Voters from LevelDb */
+router.get('/voters/getFromDb', function (req, res, next) {
+    let list = [];
+    let totalAmount = 0;
+    db.createReadStream({gte: '0x', lt: '1x', "limit": 500})
+        .on('data', function (data) {
+            list.push(data.value);
+            totalAmount = totalAmount + data.value.balance * 1;
+        })
+        .on('end', function () {
+            res.json(list.sort(compareValues('balance', 'desc')));
+        });
+});
+
+
+router.post('/stats/cleanup', function (req, res, next) {
+    if (rConfig.appKey === req.headers['x-api-key']) {
+        request({
+            method: 'get',
+            json: true, // Use,If you are sending JSON data
+            url: 'http://' + rConfig.node + ':6100/api/delegates/forging/getForgedByAccount?generatorPublicKey=' + PUB_KEY,
+            body: {},
+            headers: {
+                "accept": "application/json"
+            }
+        }, function (err, res, body) {
+
+            if (!err) {
+                dbGetKey('1xSTATS').then(function (stat) {
+                    stat.totalRewardAmount = 0;
+                    stat.startedForgedAmount = stat.startedForgedAmount * 1 + req.body.totalPayout * 1;
+                    stat.timestampUpdate = Date.now();
+                    db.put('1xSTATS', stat);
+                    stats = stat;
+                });
+            }
+        });
+    }
+});
 
 
 module.exports = router;
