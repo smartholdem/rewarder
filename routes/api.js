@@ -200,6 +200,14 @@ router.post('/worker/voter-reward', function (req, res, next) {
     }
 });
 
+router.post('/worker/update-reward', function (req, res, next) {
+    if (rConfig.appKey === req.headers['x-api-key']) {
+        db.get('0x' + req.body.address).then(function(data){
+            res.json(data);
+        });
+    }
+});
+
 /* Get Active Voters from LevelDb */
 router.get('/db/stats', function (req, res, next) {
     dbGetKey('1xSTATS').then(function (data) {
