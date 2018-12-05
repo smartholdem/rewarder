@@ -47,15 +47,15 @@ function statsUpdate() {
     }, function (err, res, body) {
         if (!err) {
             dbGetKey('1xSTATS').then(function (stat) {
-                stat.totalRewardAmount = body.forged - stat.startedForgingAmount;
-                stat.currentForgingAmount = body.forged;
+                stat.totalRewardAmount = body.forged - stat.startedForgedAmount;
+                stat.currentForgedAmount = body.forged;
                 stat.timestamp = Date.now();
                 db.put('1xSTATS', stat);
                 stats = stat;
             }, function (newStats) {
                 db.put('1xSTATS', {
-                    "startedForgingAmount": body.forged,
-                    "currentForgingAmount": body.forged,
+                    "startedForgedAmount": body.forged,
+                    "currentForgedAmount": body.forged,
                     "totalRewardAmount": 0,
                     "timestamp": Date.now(),
                     "timestampFirstStart": Date.now(),
