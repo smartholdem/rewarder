@@ -48,35 +48,34 @@ workerRequest('/api/worker/stats-update', function (dataStats) {
             let totalWeight = 0;
             let reward = dataStats.totalRewardAmount * (rConfig.rewardPercent / 100);
 
-            for (let i=0; i < body.length; i++) {
+            for (let i = 0; i < body.length; i++) {
                 totalWeight = totalWeight + body[i].balance * 1;
             }
 
             let rewardsVoters = [];
             let totalRewards = 0;
-            for (let i=0; i < body.length; i++) {
+            for (let i = 0; i < body.length; i++) {
                 let percent = (100 / totalWeight * body[i].balance).toFixed(4) * 1;
-                let currentReward = Math.floor(reward * percent / 100) / 10 ** 8;
+                let currentReward = Math.floor(reward * percent / 100); // / 10 ** 8;
                 totalRewards = totalRewards + currentReward;
                 rewardsVoters.push({
                     "address": body[i].address,
                     "personalPercent": percent,
-                    "balance": body[i].balance / 10 ** 8,
                     "currentReward": currentReward
                 });
             }
 
 
             console.log(rewardsVoters);
-            console.log('reward div',reward / 10 ** 8);
-            console.log('totalRewards',totalRewards);
+            console.log('reward div', reward / 10 ** 8);
+            console.log('totalRewards', totalRewards / 10 ** 8);
 
-            for (let i=0; i < rewardsVoters.length; i++) {
+            for (let i = 0; i < rewardsVoters.length; i++) {
                 request({
                     method: 'post',
                     json: true, // Use,If you are sending JSON data
-                    url: 'http://127.0.0.1:' + rConfig.port + '/worker/update-reward',
-                    body: {"address":rewardsVoters[i].address},
+                    url: 'http://127.0.0.1:' + rConfig.port + '/api/worker/update-reward',
+                    body: rewardsVoters[i],
                     headers: {
                         "accept": "application/json",
                         "x-api-key": rConfig.appKey
