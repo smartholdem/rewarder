@@ -22,6 +22,30 @@ const dbGetKey = (key) => {
     });
 };
 
+// function for dynamic sorting
+function compareValues(key, order = 'asc') {
+    return function (a, b) {
+        if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+            // property doesn't exist on either object
+            return 0;
+        }
+
+        const varA = (typeof a[key] === 'string') ?
+            a[key].toUpperCase() : a[key];
+        const varB = (typeof b[key] === 'string') ?
+            b[key].toUpperCase() : b[key];
+
+        let comparison = 0;
+        if (varA > varB) {
+            comparison = 1;
+        } else if (varA < varB) {
+            comparison = -1;
+        }
+        return (
+            (order == 'desc') ? (comparison * -1) : comparison
+        );
+    };
+}
 
 if (!rConfig.secret) {
     util.log("Please enter the SmartHoldem Delegate passphrase");
@@ -52,7 +76,7 @@ function getVoters() {
 /* API ROUTES */
 
 /* GET votes >= voterWeightMin */
-router.get('/voters/getFromBlockchain', function (req, res, next) {
+router.get('/voters/getFromChain', function (req, res, next) {
     getVoters().then(function (data) {
         res.json(data);
     });
@@ -67,9 +91,14 @@ router.get('/delegate/:name', function (req, res, next) {
 
 
 router.get('/voters/getFromDb', function (req, res, next) {
-    getVoters().then(function (data) {
-        res.json(data);
-    });
+    let list = [];
+    db.createReadStream({gte: '0x', lt: '1x', "limit": 500})
+        .on('data', function (data) {
+            list.push(data.value);
+        })
+        .on('end', function () {
+            res.json(list.sort(compareValues('balance', 'desc')));
+        });
 });
 
 /* Update votes db */
@@ -79,19 +108,24 @@ router.post('/voters/update', function (req, res, next) {
             for (let i=0; i < data.length; i++) {
                 console.log(data[i]);
                 dbGetKey('0x' + data[i].address).then(function (dbVote) {
-                    if (dbVote.balance < (rConfig.voterWeightMin * 10 ** 8)) {
+                    if (data[i].balance < (rConfig.voterWeightMin * 10 ** 8)) {
                         db.del('0x' + data[i].address);
                     } else {
                         dbVote.balance = data[i].balance;
+                        dbVote.reward = 0;
                         db.put('0x' + data[i].address, dbVote);
                     }
                 }, function (newVoter) {
-                    db.put('0x' + data[i].address, {
-                        "address":  data[i].address,
-                        "balance":  data[i].balance,
-                        "timestamp": Date.now(),
-                    });
-
+                    if (data[i].balance >= (rConfig.voterWeightMin * 10 ** 8)) {
+                        db.put('0x' + data[i].address, {
+                            "address": data[i].address,
+                            "balance": data[i].balance,
+                            "reward": 0,
+                            "timestamp": Date.now(),
+                        }).then(function (value) {
+                            console.log(value)
+                        });
+                    }
                 });
             }
         });
