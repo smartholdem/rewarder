@@ -24,7 +24,7 @@ mv sample.config.json config.json
 sh restart.sh
 ```
 
-## API
+## Public API
 
 ### Get Stats
 
