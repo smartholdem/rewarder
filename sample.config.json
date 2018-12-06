@@ -6,6 +6,7 @@
   "port": 3007,
   "rewardPercent": 60,
   "rewardPeriodDays": 7,
+  "rewardTime": "1:1:1",
   "voterWeightMin": 500,
   "log": "rewarder.log",
   "service": true
