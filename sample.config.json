@@ -7,5 +7,6 @@
   "rewardPercent": 60,
   "rewardPeriodDays": 7,
   "voterWeightMin": 500,
-  "log": "rewarder.log"
+  "log": "rewarder.log",
+  "service": true
 }
