@@ -16,6 +16,7 @@ Rename sample.config.json > config.json and set params
 
 ```
 mv sample.config.json config.json
+nano config.json
 ```
 
 ## Run
