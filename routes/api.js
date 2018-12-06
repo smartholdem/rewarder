@@ -220,6 +220,7 @@ router.get('/db/stats', function (req, res, next) {
         dbGetKey('1xSTATS').then(function (data) {
             data.delegate = rConfig.delegate;
             data.paymetPeriod = rConfig.rewardPeriodDays;
+            data.paymetPercent = rConfig.rewardPercent;
             data.totalRewardAmount = data.totalRewardAmount / 10 ** 8;
             data.startedForgedAmount = data.startedForgedAmount / 10 ** 8;
             data.currentForgedAmount = data.currentForgedAmount / 10 ** 8;
