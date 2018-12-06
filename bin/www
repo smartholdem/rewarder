@@ -52,7 +52,7 @@ app.listen(rConfig.port, () => {
     console.log(fs.readFileSync("./art.txt", "utf8"));
     util.log(`Server started on port ${rConfig.port} date:` + moment().toISOString() + "\r\n");
     util.log(`SmartHoldem Rewarder Address: ${ADDR}, Node: ${rConfig.node}:6100` + "\r\n");
-    payouts.startScheduler(rTime[2] + " "+ rTime[1] + " " + rTime[0] + " /" + rConfig.rewardPeriodDays + " * *");
+    payouts.startScheduler(rTime[2] + " "+ rTime[1] + " " + rTime[0] + " */" + rConfig.rewardPeriodDays + " * *");
 });
 
 server.on('error', onError);
