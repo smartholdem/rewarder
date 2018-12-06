@@ -92,13 +92,34 @@ result
 
 ```json
 [
-  {
-    "address": "SAg1sta3Wu5EHaj8Mo6kFUJQatWNk7caDE",
-    "balance": "136500340000000",
-    "reward": 209000000,
-    "timestamp": 1544065201171,
-    "personalPercent": 100
-  }
+ {
+   "address": "SbpBLz4yBDHqsS1F3msKM3e44jNCWc6rXf",
+   "balance": "7141043214012",
+   "reward": 3164256,
+   "timestamp": 1544074201177,
+   "personalPercent": 6.5922
+ },
+ {
+   "address": "Sh2AmBRP5WH1JAtkREwv3hBPkpgMuo5nQY",
+   "balance": "60453730000000",
+   "reward": 26787744,
+   "timestamp": 1544074201178,
+   "personalPercent": 55.8078
+ },
+ {
+   "address": "SPBJ65i1H2qyUuv8mFEWZEqWHrGF4QUwe9",
+   "balance": "30356730000000",
+   "reward": 13451424,
+   "timestamp": 1544074201178,
+   "personalPercent": 28.0238
+ },
+ {
+   "address": "Sa8EKhbkEbtaHqM461bTcCTpHcBmk7Wo2f",
+   "balance": "10373400000000",
+   "reward": 4596576,
+   "timestamp": 1544074201178,
+   "personalPercent": 9.5762
+ }
 ]
 ```
 
