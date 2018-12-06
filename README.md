@@ -22,6 +22,7 @@ nano config.json
 
 2. Config Params
 
+```json
 {
   "node": "127.0.0.1", // SmartHoldem Node IP
   "delegate": "delegatename", // Your Delegate Name
@@ -35,6 +36,7 @@ nano config.json
   "log": "rewarder.log",
   "service": true // For the future front-end
 }
+```
 
 ## Run
 
