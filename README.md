@@ -22,7 +22,7 @@ nano config.json
 
 2. Config Params
 
-```json
+```js
 {
   "node": "127.0.0.1", // SmartHoldem Node IP
   "delegate": "delegatename", // Your Delegate Name
