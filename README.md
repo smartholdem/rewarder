@@ -24,6 +24,8 @@ sh restart.sh
 
 ## API
 
+### Get Stats
+
 ```
 GET http://127.0.0.1:3007/api/db/stats
 ```
@@ -41,4 +43,20 @@ result
 }
 ```
 
+### Get Voters from chain
+
+```
+GET http://127.0.0.1:3007/api/voters/getFromChain
+```
+
+result
+
+```json
+[
+  {
+    "address": "SX6tVqCamHj2wDBdoqVmLBy9pUbKhKCw31",
+    "balance": "11122230000000"
+  }
+]
+```
 
