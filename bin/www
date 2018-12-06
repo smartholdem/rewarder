@@ -1,24 +1,21 @@
 #!/usr/bin/env node
 const fs = require("fs");
-const nconf = require("nconf");
 const smartholdemApi = require("sthjs-wrapper");
 const sth = require("sthjs");
 const moment = require("moment");
 const util = require("../api/util");
 const payouts = require("../payouts");
+const jsonReader = require('jsonfile');
+const rConfig = jsonReader.readFileSync("./config.json");
+LOG_FILE = "./rewarder.log";
 
-nconf.argv().file("../config.json");
-LOG_FILE = "../" + nconf.get("log");
-const PREFERRED_NODE = nconf.get("node");
-const PASSPHRASE = nconf.get("secret");
-const PORT = nconf.get("port");
-if(!PASSPHRASE)
+if(!rConfig.secret)
 {
     console.log("Please enter the SmartHoldem Delegate passphrase");
     process.exit(1);
 }
 
-const PUBKEY = sth.crypto.getKeys(PASSPHRASE).publicKey;
+const PUBKEY = sth.crypto.getKeys(rConfig.secret).publicKey;
 const ADDR = sth.crypto.getAddress(PUBKEY);
 
 /**
@@ -33,7 +30,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || PORT);
+var port = normalizePort(process.env.PORT || rConfig.port);
 app.set('port', port);
 
 /**
@@ -48,21 +45,14 @@ var server = http.createServer(app);
 
 // server.listen(port);
 
-app.listen(PORT, () => {
-
+app.listen(rConfig.port, () => {
+    smartholdemApi.setPreferredNode(rConfig.node);
     smartholdemApi.init("main"); //main or dev
-    const REWARD_PERIOD = "* * * /" + nconf.get("rewardPeriodDays") + " * *";
-    console.log(fs.readFileSync("../art.txt", "utf8"));
-    util.log(`Server started on port ${PORT} date:` + moment().toISOString() + "\r\n");
-    util.log(`SmartHoldem Rewarder Address: ${ADDR}, Node: ${PREFERRED_NODE}` + "\r\n");
-    payouts.startScheduler(REWARD_PERIOD, {
-        "pass": PASSPHRASE,
-        "pubKey": PUBKEY,
-        "node": PREFERRED_NODE,
-        "delegate": nconf.get("delegate"),
-        "percent": nconf.get("rewardPercent"),
-        "minvote": nconf.get("voterWeightMin") * 100000000
-    });
+    // const REWARD_PERIOD = "1 1 0 */1 * *";
+    console.log(fs.readFileSync("./art.txt", "utf8"));
+    util.log(`Server started on port ${rConfig.port} date:` + moment().toISOString() + "\r\n");
+    util.log(`SmartHoldem Rewarder Address: ${ADDR}, Node: ${rConfig.node}:6100` + "\r\n");
+    payouts.startScheduler("1 1 1 /" + rConfig.rewardPeriodDays + " * *");
 });
 
 server.on('error', onError);
