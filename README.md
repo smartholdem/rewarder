@@ -12,12 +12,29 @@ npm install
 
 ## Settings
 
-Rename sample.config.json > config.json and set params
+
+1. Rename sample.config.json > config.json and set params
 
 ```
 mv sample.config.json config.json
 nano config.json
 ```
+
+2. Config Params
+
+{
+  "node": "127.0.0.1", // SmartHoldem Node IP
+  "delegate": "delegatename", // Your Delegate Name
+  "secret": "secret 12 mnemo-words from delegate address", // Secret Pass Phrase Delegate for payments
+  "appKey": "appSecretKey", // Local Server Secret Key !be sure to install your
+  "port": 3007, // rewarder APP port
+  "rewardPercent": 60, // The percentage of payments from the amount of forging
+  "rewardPeriodDays": 7, // Payment period in days to voters
+  "rewardTime": "2:5:12", // H:m:s payment time, in 2 hours 5 minutes 12 sec
+  "voterWeightMin": 500, // The minimum voice weight for the calculation of payments
+  "log": "rewarder.log",
+  "service": true // For the future front-end
+}
 
 ## Run
 
