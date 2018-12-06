@@ -62,3 +62,28 @@ result
 ]
 ```
 
+### Get Delegate info by name
+
+```
+GET http://127.0.0.1:3007/api/delegate/nrz
+```
+
+result
+
+```json
+{
+  "success": true,
+  "delegate": {
+    "username": "barzelgor",
+    "address": "SadnAkM8RvhKBbP3o7xGxkUJ3E92ZTYVk2",
+    "publicKey": "02c5ccbc6f2f56460fc274ba604ba819ab6c4b5a9ff6d89f4a24013b61a994c510",
+    "vote": "345619830000000",
+    "producedblocks": 57559,
+    "missedblocks": 861,
+    "rate": 1,
+    "approval": 1.4,
+    "productivity": 98.53
+  }
+}
+```
+
