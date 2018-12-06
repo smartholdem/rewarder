@@ -237,6 +237,17 @@ router.post('/db/put', function (req, res, next) {
     }
 });
 
+// Get records from db
+router.get('/db/get/:from/:to', function (req, res, next) {
+    let list = [];
+    db.createReadStream({gte: req.params["from"] + 'x', lt: req.params["to"] + 'x', "limit": 1000})
+        .on('data', function (data) {
+            list.push(data.value);
+        })
+        .on('end', function () {
+            res.json(list);
+        });
+});
 
 /* Get Active Voters from LevelDb */
 router.get('/voters/getFromDb', function (req, res, next) {
