@@ -63,6 +63,28 @@ result
 ]
 ```
 
+### Get Active Voters from DB
+
+```
+GET http://127.0.0.1:3007/api/voters/getFromDb
+```
+
+information is available after the first recount
+
+result
+
+```json
+[
+  {
+    "address": "SAg1sta3Wu5EHaj8Mo6kFUJQatWNk7caDE",
+    "balance": "136500340000000",
+    "reward": 209000000,
+    "timestamp": 1544065201171,
+    "personalPercent": 100
+  }
+]
+```
+
 ### Get Delegate info by name
 
 ```
