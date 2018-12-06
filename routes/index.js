@@ -1,8 +1,9 @@
+// front page
 var express = require('express');
 var router = express.Router();
 const jsonfile = require('jsonfile');
-const fs = require('fs');
-const nconf = require("nconf");
+const jsonReader = require('jsonfile');
+const rConfig = jsonReader.readFileSync("./config.json");
 const smartholdemApi = require("sthjs-wrapper");
 const sth = require("sthjs");
 const request = require("request");
