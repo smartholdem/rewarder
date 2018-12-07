@@ -205,7 +205,7 @@ router.post('/worker/voter-reward', function (req, res, next) {
 router.post('/worker/update-reward', function (req, res, next) {
     if (rConfig.appKey === req.headers['x-api-key']) {
         db.get('0x' + req.body.address).then(function(data){
-            console.log(req.body);
+            console.log(req.body);totalPayout
             data.personalPercent = req.body.personalPercent;
             data.reward = req.body.currentReward;
             db.put('0x' + req.body.address, data);
@@ -225,6 +225,7 @@ router.get('/db/stats', function (req, res, next) {
             data.totalRewardAmount = data.totalRewardAmount / 10 ** 8;
             data.startedForgedAmount = data.startedForgedAmount / 10 ** 8;
             data.currentForgedAmount = data.currentForgedAmount / 10 ** 8;
+            data.totalPayout = data.totalPayout / 10 ** 8;
             res.json(data);
         }, function (newStats) {
             res.json(false);
