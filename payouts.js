@@ -61,7 +61,7 @@ var doPayout = () => {
                     smartholdemApi.sendTransactions(transactions, (error, success, responseSend) => {
                         if (!error) {
                             if (responseSend.success === true) {
-                                util.log("Total Payout:" + totalPayout / 10 ** 8);
+                                util.log("Total Payout:" + (totalPayout / 10 ** 8));
                                 for (let i = 0; i < transactions.length; i++) {
                                     dbUpdate('2x' + transactions[i].id, {
                                         "recipientId": transactions[i].recipientId,
