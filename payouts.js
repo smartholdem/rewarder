@@ -45,7 +45,7 @@ var doPayout = () => {
                     let payoutSum = body[i].reward - fee;
                     if (payoutSum > 10000000) {
                         totalPayout = totalPayout + body[i].reward;
-                        transactions.push(smartholdemApi.createTransaction(rConfig.secret, body[i].address, payoutSum, {vendorField: "Payout from " + rConfig.delegate}));
+                        transactions.push(smartholdemApi.createTransaction(rConfig.secret, body[i].address, payoutSum, {vendorField: "Reward from " + rConfig.delegate}));
                         dbUpdate('0x' + body[i].address, {
                             "address": body[i].address,
                             "balance": body[i].balance,
