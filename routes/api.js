@@ -160,14 +160,14 @@ router.post('/worker/voters-update', function (req, res, next) {
             for (let i = 0; i < data.length; i++) {
                 // console.log(data[i]);
                 dbGetKey('0x' + data[i].address).then(function (dbVote) {
-                    if (data[i].balance < (rConfig.voterWeightMin * 10 ** 8)) {
+                    if (data[i].balance < (rConfig.voterWeightMin * 100000000)) {
                         db.del('0x' + data[i].address);
                     } else {
                         dbVote.balance = data[i].balance;
                         db.put('0x' + data[i].address, dbVote);
                     }
                 }, function (newVoter) {
-                    if (data[i].balance >= (rConfig.voterWeightMin * 10 ** 8)) {
+                    if (data[i].balance >= (rConfig.voterWeightMin * 100000000)) {
                         let addVoter = {
                             "address": data[i].address,
                             "balance": data[i].balance,
@@ -222,10 +222,10 @@ router.get('/db/stats', function (req, res, next) {
             data.paymetPeriod = rConfig.rewardPeriodDays;
             data.paymetPercent = rConfig.rewardPercent;
             data.minVoteWeight = rConfig.voterWeightMin;
-            data.totalRewardAmount = data.totalRewardAmount / 10 ** 8;
-            data.startedForgedAmount = data.startedForgedAmount / 10 ** 8;
-            data.currentForgedAmount = data.currentForgedAmount / 10 ** 8;
-            data.totalPayout = data.totalPayout / 10 ** 8;
+            data.totalRewardAmount = data.totalRewardAmount / 100000000;
+            data.startedForgedAmount = data.startedForgedAmount / 100000000;
+            data.currentForgedAmount = data.currentForgedAmount / 100000000;
+            data.totalPayout = data.totalPayout / 100000000;
             res.json(data);
         }, function (newStats) {
             res.json(false);

@@ -57,7 +57,7 @@ workerRequest('/api/worker/stats-update', function (dataStats) {
             let totalRewards = 0;
             for (let i = 0; i < body.length; i++) {
                 let percent = (100 / totalWeight * body[i].balance).toFixed(4) * 1;
-                let currentReward = Math.floor(reward * percent / 100); // / 10 ** 8;
+                let currentReward = Math.floor(reward * percent / 100);
                 totalRewards = totalRewards + currentReward;
                 rewardsVoters.push({
                     "address": body[i].address,
@@ -68,8 +68,8 @@ workerRequest('/api/worker/stats-update', function (dataStats) {
 
 
             console.log(rewardsVoters);
-            console.log('reward div', reward / 10 ** 8);
-            console.log('totalRewards', totalRewards / 10 ** 8);
+            console.log('reward div', reward / 100000000);
+            console.log('totalRewards', totalRewards / 100000000);
 
             for (let i = 0; i < rewardsVoters.length; i++) {
                 request({
@@ -83,8 +83,8 @@ workerRequest('/api/worker/stats-update', function (dataStats) {
                     }
                 }, function (errUpdate, resUdate, bodyUpdate) {
                     if (!errUpdate) {
-                        bodyUpdate.reward = bodyUpdate.reward / 10 ** 8;
-                        bodyUpdate.balance = bodyUpdate.balance / 10 ** 8;
+                        bodyUpdate.reward = bodyUpdate.reward / 100000000;
+                        bodyUpdate.balance = bodyUpdate.balance / 100000000;
                         console.log(bodyUpdate);
                     }
                 });
