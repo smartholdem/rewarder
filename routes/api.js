@@ -219,8 +219,8 @@ router.get('/db/stats', function (req, res, next) {
     statsUpdate(function(data){
         dbGetKey('1xSTATS').then(function (data) {
             data.delegate = rConfig.delegate;
-            data.paymetPeriod = rConfig.rewardPeriodDays;
-            data.paymetPercent = rConfig.rewardPercent;
+            data.paymentPeriod = rConfig.rewardPeriodDays;
+            data.paymentPercent = rConfig.rewardPercent;
             data.minVoteWeight = rConfig.voterWeightMin;
             data.totalRewardAmount = data.totalRewardAmount / 100000000;
             data.startedForgedAmount = data.startedForgedAmount / 100000000;
