@@ -9,5 +9,6 @@
   "rewardTime": "2:5:12",
   "voterWeightMin": 500,
   "log": "rewarder.log",
-  "service": true
+  "service": true,
+  "personalPage": false
 }
