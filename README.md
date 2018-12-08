@@ -1,4 +1,4 @@
-[![Rewarder](https://github.com/smartholdem/rewarder/blob/master/public/images/rewarder_screen.png)]
+![Rewarders](https://github.com/smartholdem/rewarder/blob/master/public/images/rewarder_screen.png)
 
 # SmartHoldem Delegate - Automatic Rewards Voters
 
