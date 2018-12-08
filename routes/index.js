@@ -7,19 +7,63 @@ const smartholdemApi = require("sthjs-wrapper");
 const sth = require("sthjs");
 const request = require("request");
 
-if (!rConfig.secret) {
-    console.log("Please enter the SmartHoldem Delegate passphrase");
-    process.exit(1);
+/* GET home page. */
+async function getStat() {
+    return new Promise((resolve, reject) => {
+        request({
+            method: 'get',
+            json: true, // Use,If you are sending JSON data
+            url: 'http://localhost:' + rConfig.port + '/api/db/stats',
+            headers: {
+                "accept": "application/json"
+            }
+        }, function (err, res, body) {
+            if (!err) {
+                resolve(body);
+            }
+            reject(err);
+        });
+    });
 }
 
-/* GET home page. */
+async function getVoters() {
+    return new Promise((resolve, reject) => {
+        request({
+            method: 'get',
+            json: true, // Use,If you are sending JSON data
+            url: 'http://localhost:' + rConfig.port + '/api/voters/getFromDb',
+            headers: {
+                "accept": "application/json"
+            }
+        }, function (err, res, body) {
+            if (!err) {
+                resolve(body);
+            }
+            reject(err);
+        });
+    });
+}
+
 router.get('/', function (req, res, next) {
-    res.render('index', {
-        title: 'Delegate Rewarder',
-        voterDaysMin: rConfig.voterDaysMin,
-        rewardPercent: rConfig.rewardPercent,
-        delegate: rConfig.delegate,
-        totalPayout: 0,
+    getStat().then(function (dataStat) {
+        getVoters().then(function (dataVoters) {
+            if (dataVoters.length > 0) {
+                for (let i=0; i < dataVoters.length; i++) {
+                    dataVoters[i]. balance = dataVoters[i]. balance / 100000000;
+                    dataVoters[i].reward = dataVoters[i].reward / 100000000;
+                }
+            }
+            console.log(dataVoters);
+            res.render('index', {
+                title: 'Delegate ' + rConfig.delegate,
+                stats: dataStat,
+                voterDaysMin: rConfig.voterDaysMin,
+                rewardPercent: rConfig.rewardPercent,
+                delegate: rConfig.delegate,
+                totalPayout: 0,
+                voters: dataVoters,
+            });
+        });
     });
 });
 
