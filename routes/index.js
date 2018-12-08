@@ -45,26 +45,30 @@ async function getVoters() {
 }
 
 router.get('/', function (req, res, next) {
-    getStat().then(function (dataStat) {
-        getVoters().then(function (dataVoters) {
-            if (dataVoters.length > 0) {
-                for (let i=0; i < dataVoters.length; i++) {
-                    dataVoters[i]. balance = dataVoters[i]. balance / 100000000;
-                    dataVoters[i].reward = dataVoters[i].reward / 100000000;
+    if (rConfig.personalPage) {
+        getStat().then(function (dataStat) {
+            getVoters().then(function (dataVoters) {
+                if (dataVoters.length > 0) {
+                    for (let i = 0; i < dataVoters.length; i++) {
+                        dataVoters[i].balance = dataVoters[i].balance / 100000000;
+                        dataVoters[i].reward = dataVoters[i].reward / 100000000;
+                    }
                 }
-            }
-            console.log(dataVoters);
-            res.render('index', {
-                title: 'Delegate ' + rConfig.delegate,
-                stats: dataStat,
-                voterDaysMin: rConfig.voterDaysMin,
-                rewardPercent: rConfig.rewardPercent,
-                delegate: rConfig.delegate,
-                totalPayout: 0,
-                voters: dataVoters,
+                console.log(dataVoters);
+                res.render('index', {
+                    title: 'Delegate ' + rConfig.delegate,
+                    stats: dataStat,
+                    voterDaysMin: rConfig.voterDaysMin,
+                    rewardPercent: rConfig.rewardPercent,
+                    delegate: rConfig.delegate,
+                    totalPayout: 0,
+                    voters: dataVoters,
+                });
             });
         });
-    });
+    } else {
+        res.json('Personal Delegate page disabled');
+    }
 });
 
 module.exports = router;
