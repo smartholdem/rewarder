@@ -44,6 +44,10 @@ nano config.json
 sh restart.sh
 ```
 
+## Delegate Personal Page
+
+http://host_ip:3007/
+
 ## Public API
 
 ### Get Stats
