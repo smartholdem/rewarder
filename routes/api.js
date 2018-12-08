@@ -205,7 +205,6 @@ router.post('/worker/voter-reward', function (req, res, next) {
 router.post('/worker/update-reward', function (req, res, next) {
     if (rConfig.appKey === req.headers['x-api-key']) {
         db.get('0x' + req.body.address).then(function(data){
-            // console.log(req.body); // totalPayout
             data.personalPercent = req.body.personalPercent;
             data.reward = req.body.currentReward;
             db.put('0x' + req.body.address, data);
