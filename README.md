@@ -36,7 +36,7 @@ nano config.json
   "rewardTime": "2:5:12", // H:m:s payment time, in 2 hours 5 minutes 12 sec
   "voterWeightMin": 500, // The minimum voice weight for the calculation of payments
   "log": "rewarder.log",
-  "service": true // For the future front-end,
+  "service": true, // For the future front-end,
   "personalPage": false // Show Delegate Personal Page, default - false
 }
 ```
