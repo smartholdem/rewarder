@@ -52,6 +52,14 @@ sh restart.sh
 http://host_ip:3007/
 ```
 
+## Update
+
+```
+cd rewarder
+git pull
+sh restart.sh
+```
+
 ## Public API
 
 ### Get Stats
