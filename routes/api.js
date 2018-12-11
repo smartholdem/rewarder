@@ -139,7 +139,7 @@ async function removeUnvotedUsers() {
                 }
             })
             .on('end', function () {
-                console.log(listRemoved);
+                // console.log(listRemoved);
                 return true;
             });
     });
@@ -148,7 +148,7 @@ async function removeUnvotedUsers() {
 /* API ROUTES */
 
 statsUpdate(function (data) {
-    // console.log(data);
+
 });
 
 /* GET votes >= voterWeightMin */
@@ -185,7 +185,6 @@ router.post('/worker/voters-update', function (req, res, next) {
         removeUnvotedUsers();
         getVoters().then(function (data) {
             for (let i = 0; i < data.length; i++) {
-                // console.log(data[i]);
                 dbGetKey('0x' + data[i].address).then(function (dbVote) {
                     if (data[i].balance < (rConfig.voterWeightMin * 100000000)) {
                         db.del('0x' + data[i].address);

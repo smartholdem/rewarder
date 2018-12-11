@@ -33,7 +33,7 @@ function workerRequest(apiPath, callback) {
 
 workerRequest('/api/worker/stats-update', function (dataStats) {
     workerRequest('/api/worker/voters-update', function (dataVoters) {
-        console.log('dataStats', dataStats);
+        // console.log('dataStats', dataStats);
         // console.log('dataVoters',dataVoters);
 
         request({
@@ -67,9 +67,9 @@ workerRequest('/api/worker/stats-update', function (dataStats) {
             }
 
 
-            console.log(rewardsVoters);
-            console.log('reward div', reward / 100000000);
-            console.log('totalRewards', totalRewards / 100000000);
+            // console.log(rewardsVoters);
+            // console.log('reward div', reward / 100000000);
+            // console.log('totalRewards', totalRewards / 100000000);
 
             for (let i = 0; i < rewardsVoters.length; i++) {
                 request({
@@ -85,7 +85,7 @@ workerRequest('/api/worker/stats-update', function (dataStats) {
                     if (!errUpdate) {
                         bodyUpdate.reward = bodyUpdate.reward / 100000000;
                         bodyUpdate.balance = bodyUpdate.balance / 100000000;
-                        console.log(bodyUpdate);
+                        // console.log(bodyUpdate);
                     }
                 });
             }
