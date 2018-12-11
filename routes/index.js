@@ -54,7 +54,7 @@ router.get('/', function (req, res, next) {
                         dataVoters[i].reward = dataVoters[i].reward / 100000000;
                     }
                 }
-                console.log(dataVoters);
+
                 res.render('index', {
                     title: 'Delegate ' + rConfig.delegate,
                     stats: dataStat,
@@ -63,6 +63,7 @@ router.get('/', function (req, res, next) {
                     delegate: rConfig.delegate,
                     totalPayout: 0,
                     voters: dataVoters,
+                    totalVoters: dataVoters.length
                 });
             });
         });
