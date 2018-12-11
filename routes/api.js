@@ -48,31 +48,31 @@ function statsUpdate(callback) {
         }
     }, function (err, res, body) {
 
-            if (!err) {
-                dbGetKey('1xSTATS').then(function (stat) {
-                    stat.totalRewardAmount = body.forged - stat.startedForgedAmount;
-                    stat.currentForgedAmount = body.forged;
-                    stat.timestampUpdate = Date.now();
-                    db.put('1xSTATS', stat);
-                    stats = stat;
-                    return callback(stats);
-                }, function (newStats) {
-                    db.put('1xSTATS', {
-                        "startedForgedAmount": body.forged,
-                        "currentForgedAmount": body.forged,
-                        "totalRewardAmount": 0,
-                        "totalPayout": 0,
-                        "timestampUpdate": Date.now(),
-                        "timestampFirstStart": Date.now(),
-                    });
+        if (!err) {
+            dbGetKey('1xSTATS').then(function (stat) {
+                stat.totalRewardAmount = body.forged - stat.startedForgedAmount;
+                stat.currentForgedAmount = body.forged;
+                stat.timestampUpdate = Date.now();
+                db.put('1xSTATS', stat);
+                stats = stat;
+                return callback(stats);
+            }, function (newStats) {
+                db.put('1xSTATS', {
+                    "startedForgedAmount": body.forged,
+                    "currentForgedAmount": body.forged,
+                    "totalRewardAmount": 0,
+                    "totalPayout": 0,
+                    "timestampUpdate": Date.now(),
+                    "timestampFirstStart": Date.now(),
                 });
-            }
-        });
+            });
+        }
+    });
     // return callback(stats);
 }
 
 db.on('put', function (key, value) {
-   // console.log('inserted', {key, value})
+    // console.log('inserted', {key, value})
 });
 
 // function for dynamic sorting
@@ -119,10 +119,36 @@ function getVoters() {
     });
 }
 
+
+async function removeUnvotedUsers() {
+    let listRemoved = [];
+    getVoters().then(function (chainVoters) {
+        db.createReadStream({gte: '0x', lt: '1x', "limit": 500})
+            .on('data', function (data) {
+                let remove = true;
+                for (let i=0; i < chainVoters.length; i++) {
+                    if (chainVoters[i].address === data.value.address) {
+                        remove = false;
+                        break;
+                    }
+                }
+
+                if (remove) {
+                    db.del(data.key);
+                    listRemoved.push(data.key);
+                }
+            })
+            .on('end', function () {
+                console.log(listRemoved);
+                return true;
+            });
+    });
+}
+
 /* API ROUTES */
 
-statsUpdate(function(data){
-  // console.log(data);
+statsUpdate(function (data) {
+    // console.log(data);
 });
 
 /* GET votes >= voterWeightMin */
@@ -156,6 +182,7 @@ router.get('/voters/getFromDb', function (req, res, next) {
 /* Update worker votes db */
 router.post('/worker/voters-update', function (req, res, next) {
     if (rConfig.appKey === req.headers['x-api-key']) {
+        removeUnvotedUsers();
         getVoters().then(function (data) {
             for (let i = 0; i < data.length; i++) {
                 // console.log(data[i]);
@@ -189,7 +216,7 @@ router.post('/worker/voters-update', function (req, res, next) {
 
 router.post('/worker/stats-update', function (req, res, next) {
     if (rConfig.appKey === req.headers['x-api-key']) {
-        statsUpdate(function(data) {
+        statsUpdate(function (data) {
             res.json(data);
         });
     }
@@ -204,7 +231,7 @@ router.post('/worker/voter-reward', function (req, res, next) {
 
 router.post('/worker/update-reward', function (req, res, next) {
     if (rConfig.appKey === req.headers['x-api-key']) {
-        db.get('0x' + req.body.address).then(function(data){
+        db.get('0x' + req.body.address).then(function (data) {
             data.personalPercent = req.body.personalPercent;
             data.reward = req.body.currentReward;
             db.put('0x' + req.body.address, data);
@@ -215,7 +242,7 @@ router.post('/worker/update-reward', function (req, res, next) {
 
 /* Get Active Voters from LevelDb */
 router.get('/db/stats', function (req, res, next) {
-    statsUpdate(function(data){
+    statsUpdate(function (data) {
         dbGetKey('1xSTATS').then(function (data) {
             data.delegate = rConfig.delegate;
             data.paymentPeriod = rConfig.rewardPeriodDays;
@@ -235,7 +262,7 @@ router.get('/db/stats', function (req, res, next) {
 
 router.post('/db/put', function (req, res, next) {
     if (rConfig.appKey === req.headers['x-api-key']) {
-        db.put(req.body.key, req.body.value).then(function(err, data){
+        db.put(req.body.key, req.body.value).then(function (err, data) {
             res.json(data);
         });
     }
