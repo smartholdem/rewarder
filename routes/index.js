@@ -55,6 +55,8 @@ router.get('/', function (req, res, next) {
                     }
                 }
 
+                let remainingHours = (Math.floor(Date.now() / 1000) - (Math.floor(dataStat.timestampUpdate / 1000) +  (rConfig.rewardPeriodDays * 60 * 60 * 24))) / 60 / 60;
+
                 res.render('index', {
                     title: 'Delegate ' + rConfig.delegate,
                     stats: dataStat,
@@ -63,7 +65,8 @@ router.get('/', function (req, res, next) {
                     delegate: rConfig.delegate,
                     totalPayout: 0,
                     voters: dataVoters,
-                    totalVoters: dataVoters.length
+                    totalVoters: dataVoters.length,
+                    timeRemaining: remainingHours
                 });
             });
         });
