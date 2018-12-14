@@ -3,8 +3,8 @@ var express = require('express');
 var router = express.Router();
 const jsonReader = require('jsonfile');
 const rConfig = jsonReader.readFileSync("./config.json");
-const smartholdemApi = require("sthjs-wrapper");
-const sth = require("sthjs");
+// const smartholdemApi = require("sthjs-wrapper");
+// const sth = require("sthjs");
 const request = require("request");
 
 /* GET home page. */
