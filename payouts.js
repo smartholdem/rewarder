@@ -7,6 +7,10 @@ const request = require("request");
 const jsonReader = require('jsonfile');
 const rConfig = jsonReader.readFileSync("./config.json");
 
+const sth = require("sthjs");
+const PUB_KEY = sth.crypto.getKeys(rConfig.secret).publicKey;
+const DELEGATE_ADDRESS = sth.crypto.getAddress(PUB_KEY);
+
 function dbUpdate(key, value) {
     request({
         method: 'post',
@@ -45,7 +49,12 @@ var doPayout = () => {
                     let payoutSum = body[i].reward - fee;
                     if (payoutSum > 10000000) {
                         totalPayout = totalPayout + body[i].reward;
-                        transactions.push(smartholdemApi.createTransaction(rConfig.secret, body[i].address, payoutSum, {vendorField: "Reward from " + rConfig.delegate}));
+
+                        // create tx if not current delegate address
+                        if (body[i].address !== DELEGATE_ADDRESS) {
+                            transactions.push(smartholdemApi.createTransaction(rConfig.secret, body[i].address, payoutSum, {vendorField: "Reward from " + rConfig.delegate}));
+                        }
+
                         dbUpdate('0x' + body[i].address, {
                             "address": body[i].address,
                             "balance": body[i].balance,
