@@ -52,7 +52,7 @@ var doPayout = () => {
 
                         // create tx if not current delegate address
                         if (body[i].address !== DELEGATE_ADDRESS) {
-                            transactions.push(smartholdemApi.createTransaction(rConfig.secret, body[i].address, payoutSum, {vendorField: "Reward from " + rConfig.delegate}));
+                            transactions.push(smartholdemApi.createTransaction(rConfig.secret, body[i].address, payoutSum, {vendorField: "Reward"}));
                         }
 
                         dbUpdate('0x' + body[i].address, {
