@@ -47,7 +47,7 @@ var doPayout = () => {
                 let totalPayout = 0;
                 for (let i = 0; i < body.length; i++) {
                     let payoutSum = body[i].reward - fee;
-                    if (payoutSum > 10000000) {
+                    if (payoutSum > 100000000) {
                         totalPayout = totalPayout + body[i].reward;
 
                         // create tx if not current delegate address
