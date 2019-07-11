@@ -43,7 +43,7 @@ var doPayout = () => {
             }
         }, function (err, res, body) {
             if (!err) {
-                let fee = 10000000;
+                let fee = 100000000;
                 let totalPayout = 0;
                 for (let i = 0; i < body.length; i++) {
                     let payoutSum = body[i].reward - fee;
