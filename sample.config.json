@@ -4,6 +4,7 @@
   "secret": "secret 12 mnemo-words from delegate address",
   "appKey": "appSecretKey",
   "port": 3007,
+  "wsPort": 30071,
   "rewardPercent": 60,
   "rewardPeriodDays": 7,
   "rewardTime": "2:5:12",
