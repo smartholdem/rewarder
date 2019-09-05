@@ -12,6 +12,7 @@ const util = require("../api/util")
 const jsonReader = require('jsonfile')
 const rConfig = jsonReader.readFileSync("./config.json")
 const level = require("level")
+const emitter = require('../emitter')
 const db = level('./.rewarder', {valueEncoding: 'json'})
 
 // 0x - Voters
