@@ -52,6 +52,24 @@ class Rewarder {
         return (stats)
     }
 
+    async getVoters(PubKey) {
+        let activeVoters = []
+        return new Promise((resolve, reject) => {
+            smartholdemApi.getVoters(PubKey, (error, success, response) => {
+                if (!error) {
+                    for (let i = 0; i < response.accounts.length; i++) {
+                        activeVoters.push({
+                            "address": response.accounts[i].address,
+                            "balance": response.accounts[i].balance
+                        })
+                    }
+                    resolve(activeVoters);
+                }
+                reject(activeVoters)
+            })
+        })
+    }
+
 }
 
 const rewarder = new Rewarder()
