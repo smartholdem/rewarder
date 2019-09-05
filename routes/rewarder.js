@@ -26,7 +26,29 @@ if (!rConfig.secret) {
 const PUB_KEY = sth.crypto.getKeys(rConfig.secret).publicKey;
 
 class Rewarder {
-    async statsUpdate() {
 
+    async statsUpdate(PubKey) {
+        const uri = 'http://' + rConfig.node + ':6100/api/delegates/forging/getForgedByAccount?generatorPublicKey=' + PubKey
+        let stats = {}
+        const forgingData = (await axios.get(uri)).data
+        if (result) {
+            try {
+                stats = await db.get('1xSTATS')
+                stats.totalRewardAmount = forgingData.forged - stats.startedForgedAmount
+                stats.currentForgedAmount = forgingData.forged
+                stats.timestampUpdate = Date.now()
+            } catch(e) {
+                stats = {
+                    "startedForgedAmount": forgingData.forged,
+                    "currentForgedAmount": forgingData.forged,
+                    "totalRewardAmount": 0,
+                    "totalPayout": 0,
+                    "timestampUpdate": Date.now(),
+                    "timestampFirstStart": Date.now(),
+                }
+            }
+            await db.put('1xSTATS', stats)
+        }
+        return (stats)
     }
 }
