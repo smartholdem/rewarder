@@ -62,7 +62,7 @@ class Rewarder {
                 stats.totalRewardAmount = forgingData.forged - stats.startedForgedAmount
                 stats.currentForgedAmount = forgingData.forged
                 stats.timestampUpdate = Date.now()
-            } catch(e) {
+            } catch (e) {
                 stats = {
                     "startedForgedAmount": forgingData.forged,
                     "currentForgedAmount": forgingData.forged,
@@ -101,7 +101,7 @@ class Rewarder {
         db.createReadStream({gte: '0x', lt: '1x', "limit": 500})
             .on('data', function (data) {
                 let remove = true;
-                for (let i=0; i < chainVoters.length; i++) {
+                for (let i = 0; i < chainVoters.length; i++) {
                     if (chainVoters[i].address === data.value.address) {
                         remove = false
                         break
@@ -121,5 +121,13 @@ class Rewarder {
 
 const rewarder = new Rewarder()
 
+async function init(PubKey) {
+    await rewarder.statsUpdate(PubKey)
+    return true
+}
+
+init(PUB_KEY).then(function () {
+    console.log('rewarder init')
+})
 
 module.exports = router
