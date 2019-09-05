@@ -31,7 +31,7 @@ class Rewarder {
         const uri = 'http://' + rConfig.node + ':6100/api/delegates/forging/getForgedByAccount?generatorPublicKey=' + PubKey
         let stats = {}
         const forgingData = (await axios.get(uri)).data
-        if (result) {
+        if (forgingData) {
             try {
                 stats = await db.get('1xSTATS')
                 stats.totalRewardAmount = forgingData.forged - stats.startedForgedAmount
