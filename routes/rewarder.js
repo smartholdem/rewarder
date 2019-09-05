@@ -51,4 +51,10 @@ class Rewarder {
         }
         return (stats)
     }
+
 }
+
+const rewarder = new Rewarder()
+
+
+module.exports = router
