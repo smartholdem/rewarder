@@ -11,7 +11,7 @@ process.env.PORT = appConfig.port;
 console.log("Running on port:", process.env.PORT);
 
 var indexRouter = require('./routes/index');
-var apiRouter = require('./routes/api');
+var rewarderRouter = require('./routes/rewarder');
 var app = express();
 
 // view engine setup
@@ -26,7 +26,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/api', apiRouter);
+app.use('/rewarder', rewarderRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
