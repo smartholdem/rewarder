@@ -70,6 +70,28 @@ class Rewarder {
         })
     }
 
+    async removeUnvotedUsers(PubKey) {
+        let listRemoved = [];
+        let chainVoters = await this.getVoters(PubKey)
+        db.createReadStream({gte: '0x', lt: '1x', "limit": 500})
+            .on('data', function (data) {
+                let remove = true;
+                for (let i=0; i < chainVoters.length; i++) {
+                    if (chainVoters[i].address === data.value.address) {
+                        remove = false
+                        break
+                    }
+                }
+                if (remove) {
+                    db.del(data.key)
+                    listRemoved.push(data.key)
+                }
+            })
+            .on('end', function () {
+                return true
+            })
+    }
+
 }
 
 const rewarder = new Rewarder()
