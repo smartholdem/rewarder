@@ -78,14 +78,17 @@ class Reward {
     async sendGlobalStats() {
         const rndString = cryptoRandomString({length: 10});
         const sig = this.signMessage(rndString, this.secret)
-        await axios.post('')
+        await axios.post(this.globalStatsAPI, {
+            sig: sig,
+            publicKey: this.publicKey
+        })
     }
 }
 
 const reward = new Reward({
     publicKey: PUB_KEY,
     secret: config.secret,
-    globalStats: config.globalStats,
+    globalStatsAPI: config.globalStatsAPI,
 })
 
 /** delegate voters array**/
