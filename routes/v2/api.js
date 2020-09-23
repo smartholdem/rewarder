@@ -12,6 +12,13 @@ const crypto = require("crypto");
 const cryptoRandomString = require('crypto-random-string');
 const schedule = require('node-schedule')
 
+let daysLeft = jsonFile.readFileSync("./daysLeft.json").days;
+if (daysLeft < 0) {
+    daysLeft = config.day
+    jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
+
+}
+
 // 0x - pending Voters
 // 1x - active Voters
 // 2x - Stats
@@ -107,7 +114,7 @@ const reward = new Reward({
 
 
 const rule = new schedule.RecurrenceRule();
-rule.day = 1;
+rule.hour = 23;
 const cron = schedule.scheduleJob(rule, function(){
     console.log('to do');
 });
