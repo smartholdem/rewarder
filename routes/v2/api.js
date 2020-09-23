@@ -30,7 +30,7 @@ class Reward {
         let data = []
         try {
             data = (await axios.get('http://' + config.node + ':6100/api/delegates/voters?publicKey=' + this.options.publicKey)).data
-        } catch(e) {
+        } catch (e) {
             console.log('err:', e)
         }
         return data
@@ -41,8 +41,9 @@ const reward = new Reward({
     publicKey: PUB_KEY
 })
 
+/** delegate voters array**/
 router.get('/voters', async function (req, res, next) {
-   res.json(await reward.getDelegateVoters());
+    res.json(await reward.getDelegateVoters());
 });
 
 
