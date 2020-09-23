@@ -5,13 +5,14 @@ const util = require("../../modules/util");
 const jsonFile = require('jsonfile');
 const config = jsonFile.readFileSync("./config.json");
 const level = require("level");
-const db = level('./.db', {valueEncoding: 'json'});
 const axios = require('axios');
+const db = level('./.db', {valueEncoding: 'json'});
 const emitter = require('../../emitter');
 
-// 0x - Voters
-// 1x - Stats
-// 2x - Payouts
+// 0x - active Voters
+// 1x - pending Voters
+// 2x - Stats
+// 3x - Payouts
 
 if (!config.secret) {
     util.log("Please enter the SmartHoldem Delegate passphrase");
@@ -29,7 +30,17 @@ class Reward {
     async getDelegateVoters() {
         let data = []
         try {
-            data = (await axios.get('http://' + config.node + ':6100/api/delegates/voters?publicKey=' + this.options.publicKey)).data
+            data = (await axios.get('http://' + config.node + ':6100/api/delegates/voters?publicKey=' + this.options.publicKey)).data.accounts
+        } catch (e) {
+            console.log('err:', e)
+        }
+        return data
+    }
+
+    async getDelegate() {
+        let data = {}
+        try {
+            data = (await axios.get('http://' + config.node + ':6100/api/delegates/get?publicKey=' + this.options.publicKey)).data.delegate
         } catch (e) {
             console.log('err:', e)
         }
