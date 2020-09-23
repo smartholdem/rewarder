@@ -107,7 +107,7 @@ const reward = new Reward({
 
 
 const rule = new schedule.RecurrenceRule();
-rule.days = 42;
+rule.days = config.days;
 
 /** delegate voters array**/
 router.get('/voters', async function (req, res, next) {
@@ -119,6 +119,7 @@ router.get('/delegate', async function (req, res, next) {
     res.json(await reward.getDelegate());
 });
 
+/** get network fees **/
 router.get('/fees', async function (req, res, next) {
     res.json(await reward.getNetworkFees());
 });
