@@ -22,6 +22,8 @@ if (!config.secret) {
 }
 
 const PUB_KEY = sth.crypto.getKeys(config.secret).publicKey;
+let dataInitDelegate = {}
+
 
 class Reward {
 
@@ -81,8 +83,8 @@ class Reward {
         console.log(sig.signature)
         let data = await axios.post(this.options.globalStatsAPI, {
             sig: sig.signature,
-            publicKey: this.options.publicKey,
             rndString: rndString,
+            delegate: await this.getDelegate(),
             reward: {
                 percent: config.rewardPercent,
                 days: config.rewardPeriodDays,
@@ -91,6 +93,7 @@ class Reward {
         })
         return data.data
     }
+
 }
 
 const reward = new Reward({
