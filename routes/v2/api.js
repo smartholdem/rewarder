@@ -160,6 +160,7 @@ router.get('/fees', async function (req, res, next) {
     res.json(await reward.getNetworkFees());
 });
 
+/** sig global stats manually **/
 router.get('/sig', async function (req, res, next) {
     res.json(await reward.sendGlobalStats());
 });
