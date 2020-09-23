@@ -57,5 +57,11 @@ router.get('/voters', async function (req, res, next) {
     res.json(await reward.getDelegateVoters());
 });
 
+/** get current delegate info **/
+router.get('/delegate', async function (req, res, next) {
+    res.json(await reward.getDelegate());
+});
+
+
 
 module.exports = router;
