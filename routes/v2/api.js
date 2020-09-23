@@ -77,10 +77,11 @@ class Reward {
 
     async sendGlobalStats() {
         const rndString = cryptoRandomString({length: 10});
-        const sig = this.signMessage(rndString, this.options.secret)
+        const sig = await this.signMessage(rndString, this.options.secret)
+        console.log(sig.signature)
         let data = await axios.post(this.options.globalStatsAPI, {
-            sig: sig,
-            publicKey: this.publicKey,
+            sig: sig.signature,
+            publicKey: this.options.publicKey,
             rndString: rndString,
         })
         return data.data
