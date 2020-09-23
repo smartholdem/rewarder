@@ -13,12 +13,21 @@ const cryptoRandomString = require('crypto-random-string');
 const schedule = require('node-schedule')
 const DbUtils = require('../../modules/dbUtils')
 const dbUtils = new DbUtils()
+let daysLeft = -1
 
-let daysLeft = jsonFile.readFileSync("./daysLeft.json").days;
-if (daysLeft < 0) {
+try {
+    daysLeft = jsonFile.readFileSync("./daysLeft.json").days;
+    if (daysLeft < 0) {
+        daysLeft = config.day
+        jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
+    }
+} catch(e) {
     daysLeft = config.day
     jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
 }
+
+console.log('daysLeft', daysLeft)
+
 
 // 0x - pending Voters
 // 1x - active Voters
