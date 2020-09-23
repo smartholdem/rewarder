@@ -108,6 +108,9 @@ const reward = new Reward({
 
 const rule = new schedule.RecurrenceRule();
 rule.days = config.days;
+const cron = schedule.scheduleJob(rule, function(){
+    console.log('to do');
+});
 
 /** delegate voters array**/
 router.get('/voters', async function (req, res, next) {

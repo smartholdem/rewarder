@@ -167,6 +167,11 @@ result
 }
 ```
 
+### RecurrenceRule properties
+- hour (0-23)
+- date (1-31)
+- month (0-11)
+- dayOfWeek (0-6) Starting with Sunday
 
 # IMPORTANT NOTE
 
