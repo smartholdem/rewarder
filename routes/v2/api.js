@@ -10,9 +10,10 @@ const db = level('./.db', {valueEncoding: 'json'});
 const emitter = require('../../emitter');
 const crypto = require("crypto");
 const cryptoRandomString = require('crypto-random-string');
+const schedule = require('node-schedule')
 
-// 0x - active Voters
-// 1x - pending Voters
+// 0x - pending Voters
+// 1x - active Voters
 // 2x - Stats
 // 3x - Payouts
 
@@ -22,8 +23,6 @@ if (!config.secret) {
 }
 
 const PUB_KEY = sth.crypto.getKeys(config.secret).publicKey;
-let dataInitDelegate = {}
-
 
 class Reward {
 
@@ -49,8 +48,8 @@ class Reward {
             console.log('err:', e)
         }
 
-        data.rewardPercent = config.rewardPercent
-        data.rewardPeriodDays = config.rewardPeriodDays
+        data.percent = config.percent
+        data.days = config.days
         data.minVote = config.minVote
 
         return data
@@ -80,18 +79,22 @@ class Reward {
     async sendGlobalStats() {
         const rndString = cryptoRandomString({length: 10});
         const sig = await this.signMessage(rndString, this.options.secret)
-        console.log(sig.signature)
         let data = await axios.post(this.options.globalStatsAPI, {
             sig: sig.signature,
             rndString: rndString,
             delegate: await this.getDelegate(),
-            reward: {
-                percent: config.rewardPercent,
-                days: config.rewardPeriodDays,
-                minVote: config.minVote
-            }
         })
         return data.data
+    }
+
+    async getNetworkFee() {
+        let fees = {}
+        try {
+            fees = (await axios.get('http://' + config.node + ':6100/api/blocks/getFees')).data.fees
+        } catch (e) {
+            console.log('err:', e)
+        }
+        return fees
     }
 
 }
@@ -101,6 +104,10 @@ const reward = new Reward({
     secret: config.secret,
     globalStatsAPI: config.globalStatsAPI,
 })
+
+
+const rule = new schedule.RecurrenceRule();
+rule.days = 42;
 
 /** delegate voters array**/
 router.get('/voters', async function (req, res, next) {
