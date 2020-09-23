@@ -21,16 +21,29 @@ if (!config.secret) {
 const PUB_KEY = sth.crypto.getKeys(config.secret).publicKey;
 
 class Reward {
-    async getDelegateVoters(publicKey) {
+
+    constructor(data) {
+        this.options = data
+    }
+
+    async getDelegateVoters() {
         let data = []
         try {
-            data = (await axios.get('http://' + config.node + ':6100/api/delegates/voters?publicKey=' + publicKey)).data
+            data = (await axios.get('http://' + config.node + ':6100/api/delegates/voters?publicKey=' + this.options.publicKey)).data
         } catch(e) {
             console.log('err:', e)
         }
         return data
     }
 }
+
+const reward = new Reward({
+    publicKey: PUB_KEY
+})
+
+router.get('/voters', async function (req, res, next) {
+   res.json(await reward.getDelegateVoters());
+});
 
 
 module.exports = router;
