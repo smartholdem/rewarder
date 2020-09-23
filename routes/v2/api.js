@@ -9,6 +9,7 @@ const axios = require('axios');
 const db = level('./.db', {valueEncoding: 'json'});
 const emitter = require('../../emitter');
 const crypto = require("crypto");
+const cryptoRandomString = require('crypto-random-string');
 
 // 0x - active Voters
 // 1x - pending Voters
@@ -75,12 +76,16 @@ class Reward {
     }
 
     async sendGlobalStats() {
+        const rndString = cryptoRandomString({length: 10});
+        const sig = this.signMessage(rndString, this.secret)
         await axios.post('')
     }
 }
 
 const reward = new Reward({
-    publicKey: PUB_KEY
+    publicKey: PUB_KEY,
+    secret: config.secret,
+    globalStats: config.globalStats,
 })
 
 /** delegate voters array**/
