@@ -116,16 +116,24 @@ const reward = new Reward({
 })
 
 
+/** CRON Payments **/
 const rule = new schedule.RecurrenceRule();
 rule.hour = config.hour; //default 23 (0 - 23)
 const cronPayment = schedule.scheduleJob(rule, async function(){
     daysLeft--;
+    console.log('daysLeft', daysLeft)
     if (daysLeft < 1) {
         daysLeft = config.day
         await reward.runPayments()
     }
     jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
-    console.log('to do');
+});
+
+/** CRON Voters **/
+const ruleVoters = new schedule.RecurrenceRule();
+ruleVoters.minute = 30; //default 30 (0 - 59)
+const cronVoters = schedule.scheduleJob(ruleVoters, async function(){
+    let voters = await reward.getDelegateVoters()
 });
 
 
