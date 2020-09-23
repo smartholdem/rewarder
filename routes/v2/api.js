@@ -110,6 +110,36 @@ class Reward {
         return fees
     }
 
+    async updateVoters() {
+        let dt = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * this.options.daysPending;
+        let voters = await reward.getDelegateVoters()
+        let pendingVoters = await dbUtils.dbObj(db, '0' , '1')
+        let activeVoters = await dbUtils.dbObj(db, '1' , '2')
+
+        for (let i=0; i < voters.length; i++) {
+            if (pendingVoters[voters[i].address]) {
+                if (dt > pendingVoters[voters[i].address].timestamp) {
+                    /** set to active voter **/
+                    await db.put('1x' + voters[i].address, {
+                        username: voters[i].username,
+                        address: voters[i].address,
+                        publicKey: voters[i].publicKey,
+                        balance: voters[i].balance,
+                        timestamp: Math.floor(Date.now() / 1000),
+                        percent: 0,
+                        amount: 0,
+
+                    });
+                    await db.del('0x' + voters[i].address) // remove voter from pending
+                }
+            }
+
+
+        }
+
+
+    }
+
     async runPayments() {
 
     }
@@ -120,6 +150,7 @@ const reward = new Reward({
     publicKey: PUB_KEY,
     secret: config.secret,
     globalStatsAPI: config.globalStatsAPI,
+    daysPending: config.daysPending,
 })
 
 
@@ -151,7 +182,9 @@ const cronVoters = schedule.scheduleJob(ruleVoters, async function(){
                     address: voters[i].address,
                     publicKey: voters[i].publicKey,
                     balance: voters[i].balance,
-                    timestamp: Math.floor(Date.now() / 1000)
+                    timestamp: Math.floor(Date.now() / 1000),
+                    percent: 0,
+                    amount: 0,
                 });
                 console.log('voters',voters);
             }
