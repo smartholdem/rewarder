@@ -1,6 +1,6 @@
 // reward worker
 const request = require('request');
-const util = require("./api/util");
+const util = require("./modules/util");
 const scheduler = require("node-schedule");
 const jsonReader = require('jsonfile');
 const rConfig = jsonReader.readFileSync("./config.json");
