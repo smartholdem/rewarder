@@ -17,10 +17,6 @@ let daysLeft = -1
 
 try {
     daysLeft = jsonFile.readFileSync("./daysLeft.json").days;
-    if (daysLeft < 0) {
-        daysLeft = config.day
-        jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
-    }
 } catch(e) {
     daysLeft = config.day
     jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
