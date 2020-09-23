@@ -1,5 +1,6 @@
 .db
 .idea
+daysLeft.json
 config.json
 package-lock.json
 # Logs
