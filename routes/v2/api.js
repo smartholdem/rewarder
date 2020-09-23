@@ -141,8 +141,14 @@ const ruleVoters = new schedule.RecurrenceRule();
 ruleVoters.minute = 30; //default 30 (0 - 59)
 const cronVoters = schedule.scheduleJob(ruleVoters, async function(){
     let voters = await reward.getDelegateVoters()
+    let activeVoters = await dbUtils.dbObj(db, '1' , '2')
+    for (let i=0; i < voters.length; i++) {
+        if (!activeVoters[voters[i].address]) {
+            await db.put('0x' + voters[i].address, voters[i])
+        }
+    }
+    console.log(voters)
 });
-
 
 
 /** delegate voters array**/
@@ -169,10 +175,5 @@ router.get('/sig', async function (req, res, next) {
 router.get('/db/:from/:to', async function (req, res, next) {
     res.json(await dbUtils.dbObj(db, req.params["from"] , req.params["to"]));
 });
-
-
-
-
-
 
 module.exports = router;
