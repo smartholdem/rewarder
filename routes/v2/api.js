@@ -164,6 +164,14 @@ router.get('/sig', async function (req, res, next) {
     res.json(await reward.sendGlobalStats());
 });
 
+/** read objs by keys **/
+router.get('/db/:from/:to', async function (req, res, next) {
+    res.json(await dbUtils.dbObj(db, req.params["from"] , req.params["to"]));
+});
+
+
+
+
 
 
 module.exports = router;
