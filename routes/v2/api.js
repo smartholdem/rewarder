@@ -44,7 +44,16 @@ class Reward {
         } catch (e) {
             console.log('err:', e)
         }
+
+        data.rewardPercent = config.rewardPercent
+        data.rewardPeriodDays = config.rewardPeriodDays
+        data.voterWeightMin = config.voterWeightMin
+
         return data
+    }
+
+    async sendGlobalStats() {
+        await axios.post('')
     }
 }
 
