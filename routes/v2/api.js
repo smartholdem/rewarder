@@ -49,7 +49,7 @@ class Reward {
 
         data.rewardPercent = config.rewardPercent
         data.rewardPeriodDays = config.rewardPeriodDays
-        data.voterWeightMin = config.voterWeightMin
+        data.minVote = config.minVote
 
         return data
     }
@@ -83,6 +83,11 @@ class Reward {
             sig: sig.signature,
             publicKey: this.options.publicKey,
             rndString: rndString,
+            reward: {
+                percent: config.rewardPercent,
+                days: config.rewardPeriodDays,
+                minVote: config.minVote
+            }
         })
         return data.data
     }
