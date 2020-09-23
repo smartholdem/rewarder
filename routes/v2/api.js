@@ -138,7 +138,7 @@ const cronPayment = schedule.scheduleJob(rule, async function(){
 
 /** CRON Voters **/
 const ruleVoters = new schedule.RecurrenceRule();
-ruleVoters.minute = 30; //default 30 (0 - 59)
+ruleVoters.minute = 21; //default 30 (0 - 59)
 const cronVoters = schedule.scheduleJob(ruleVoters, async function(){
     let voters = await reward.getDelegateVoters()
     let activeVoters = await dbUtils.dbObj(db, '1' , '2')
