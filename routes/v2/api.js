@@ -8,6 +8,7 @@ const level = require("level");
 const axios = require('axios');
 const db = level('./.db', {valueEncoding: 'json'});
 const emitter = require('../../emitter');
+const crypto = require("crypto");
 
 // 0x - active Voters
 // 1x - pending Voters
@@ -50,6 +51,27 @@ class Reward {
         data.voterWeightMin = config.voterWeightMin
 
         return data
+    }
+
+    async signMessage(message, passphrase) {
+        let hash = crypto.createHash('sha256')
+        hash = hash.update(Buffer.from(message, 'utf-8')).digest()
+        const ecPair = sth.crypto.getKeys(passphrase)
+        return ({signature: ecPair.sign(hash).toDER().toString('hex')}) // obj.signature
+    }
+
+    async verifyMessage(message, publicKey, signature) {
+        // check for hexadecimal, otherwise the signature check would may fail
+        const re = /[0-9A-Fa-f]{6}/g
+        if (!re.test(publicKey) || !re.test(signature)) {
+            // return here already because the process will fail otherwise
+            return false
+        }
+        let hash = crypto.createHash('sha256')
+        hash = hash.update(Buffer.from(message, 'utf-8')).digest()
+        const ecPair = sth.ECPair.fromPublicKeyBuffer(Buffer.from(publicKey, 'hex'))
+        const ecSignature = sth.ECSignature.fromDER(Buffer.from(signature, 'hex'))
+        return (ecPair.verify(hash, ecSignature))
     }
 
     async sendGlobalStats() {
