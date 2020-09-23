@@ -1,15 +1,12 @@
 {
   "node": "127.0.0.1",
-  "delegate": "delegatename",
   "secret": "secret 12 mnemo-words from delegate address",
-  "appKey": "appSecretKey",
   "port": 3007,
-  "wsPort": 30071,
-  "rewardPercent": 60,
-  "rewardPeriodDays": 7,
-  "rewardTime": "2:5:12",
-  "voterWeightMin": 500,
-  "log": "rewarder.log",
-  "service": true,
-  "personalPage": false
+  "percent": 60,
+  "day": 10,
+  "hour": 23,
+  "daysPending": 5,
+  "minVote": 500,
+  "log": "reward.log",
+  "globalStatsAPI": "http://localhost:3000"
 }
