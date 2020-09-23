@@ -138,16 +138,22 @@ const cronPayment = schedule.scheduleJob(rule, async function(){
 
 /** CRON Voters **/
 const ruleVoters = new schedule.RecurrenceRule();
-ruleVoters.minute = 21; //default 30 (0 - 59)
+ruleVoters.minute = 31; //default 30 (0 - 59)
 const cronVoters = schedule.scheduleJob(ruleVoters, async function(){
     let voters = await reward.getDelegateVoters()
     let activeVoters = await dbUtils.dbObj(db, '1' , '2')
     for (let i=0; i < voters.length; i++) {
         if (!activeVoters[voters[i].address]) {
-            await db.put('0x' + voters[i].address, voters[i])
+            await db.put('0x' + voters[i].address, {
+                username: voters[i].username,
+                address: voters[i].address,
+                publicKey: voters[i].publicKey,
+                balance: voters[i].balance,
+                timestamp: Math.floor(Date.now() / 1000)
+            })
         }
     }
-    console.log(voters)
+    console.log('voters',voters)
 });
 
 
