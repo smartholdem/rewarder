@@ -16,7 +16,6 @@ let daysLeft = jsonFile.readFileSync("./daysLeft.json").days;
 if (daysLeft < 0) {
     daysLeft = config.day
     jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
-
 }
 
 // 0x - pending Voters
@@ -104,6 +103,10 @@ class Reward {
         return fees
     }
 
+    async runPayments() {
+
+    }
+
 }
 
 const reward = new Reward({
@@ -114,10 +117,18 @@ const reward = new Reward({
 
 
 const rule = new schedule.RecurrenceRule();
-rule.hour = 23;
-const cron = schedule.scheduleJob(rule, function(){
+rule.hour = config.hour; //default 23 (0 - 23)
+const cronPayment = schedule.scheduleJob(rule, async function(){
+    daysLeft--;
+    if (daysLeft < 1) {
+        daysLeft = config.day
+        await reward.runPayments()
+    }
+    jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
     console.log('to do');
 });
+
+
 
 /** delegate voters array**/
 router.get('/voters', async function (req, res, next) {
