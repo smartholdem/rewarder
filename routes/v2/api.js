@@ -78,10 +78,11 @@ class Reward {
     async sendGlobalStats() {
         const rndString = cryptoRandomString({length: 10});
         const sig = this.signMessage(rndString, this.secret)
-        await axios.post(this.globalStatsAPI, {
+        let data = await axios.post(this.globalStatsAPI, {
             sig: sig,
             publicKey: this.publicKey
         })
+        return data.data
     }
 }
 
@@ -99,6 +100,10 @@ router.get('/voters', async function (req, res, next) {
 /** get current delegate info **/
 router.get('/delegate', async function (req, res, next) {
     res.json(await reward.getDelegate());
+});
+
+router.get('/sig', async function (req, res, next) {
+    res.json(await reward.sendGlobalStats());
 });
 
 
