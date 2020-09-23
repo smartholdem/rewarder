@@ -49,7 +49,7 @@ class Reward {
         }
 
         data.percent = config.percent
-        data.days = config.days
+        data.day = config.day
         data.minVote = config.minVote
 
         return data
@@ -107,7 +107,7 @@ const reward = new Reward({
 
 
 const rule = new schedule.RecurrenceRule();
-rule.days = config.days;
+rule.day = 1;
 const cron = schedule.scheduleJob(rule, function(){
     console.log('to do');
 });
