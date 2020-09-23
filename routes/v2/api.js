@@ -87,7 +87,7 @@ class Reward {
         return data.data
     }
 
-    async getNetworkFee() {
+    async getNetworkFees() {
         let fees = {}
         try {
             fees = (await axios.get('http://' + config.node + ':6100/api/blocks/getFees')).data.fees
@@ -117,6 +117,10 @@ router.get('/voters', async function (req, res, next) {
 /** get current delegate info **/
 router.get('/delegate', async function (req, res, next) {
     res.json(await reward.getDelegate());
+});
+
+router.get('/fees', async function (req, res, next) {
+    res.json(await reward.getNetworkFees());
 });
 
 router.get('/sig', async function (req, res, next) {
