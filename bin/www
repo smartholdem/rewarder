@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 const fs = require("fs");
-const smartholdemApi = require("sthjs-wrapper");
-const sth = require("sthjs");
 const moment = require("moment");
-const util = require("../api/util");
+const util = require("../modules/util");
 const payouts = require("../payouts");
 const jsonReader = require('jsonfile');
 const rConfig = jsonReader.readFileSync("./config.json");
@@ -45,8 +43,6 @@ var server = http.createServer(app);
 // server.listen(port);
 
 app.listen(rConfig.port, () => {
-    smartholdemApi.setPreferredNode(rConfig.node);
-    smartholdemApi.init("main"); //main or dev
     // const REWARD_PERIOD = "1 1 0 */1 * *";
     let rTime = rConfig.rewardTime.split(':');
     console.log(fs.readFileSync("./art.txt", "utf8"));
