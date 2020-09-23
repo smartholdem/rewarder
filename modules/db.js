@@ -3,7 +3,7 @@ class database {
         let result = null
         try {
             result = await db.get(key)
-        } catch(e) {
+        } catch (e) {
             result = null
         }
         return result
