@@ -11,6 +11,8 @@ const emitter = require('../../emitter');
 const crypto = require("crypto");
 const cryptoRandomString = require('crypto-random-string');
 const schedule = require('node-schedule')
+const DbUtils = require('../../modules/dbUtils')
+const dbUtils = new DbUtils()
 
 let daysLeft = jsonFile.readFileSync("./daysLeft.json").days;
 if (daysLeft < 0) {
