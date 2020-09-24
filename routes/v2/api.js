@@ -185,6 +185,7 @@ const reward = new Reward({
 const rule = new schedule.RecurrenceRule();
 rule.hour = config.hour; //default 23 (0 - 23)
 const cronPayment = schedule.scheduleJob(rule, async function () {
+    console.log('cronPayment')
     daysLeft--;
     console.log('daysLeft', daysLeft)
     if (daysLeft < 1) {
@@ -199,6 +200,7 @@ const cronPayment = schedule.scheduleJob(rule, async function () {
 const ruleVoters = new schedule.RecurrenceRule();
 ruleVoters.minute = 31; //default 30 (0 - 59)
 const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
+    console.log('cronVoters')
     let voters = await reward.getDelegateVoters()
     let pendingVoters = await dbUtils.dbObj(db, '0', '1')
     let activeVoters = await dbUtils.dbObj(db, '1', '2')
