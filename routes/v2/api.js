@@ -274,4 +274,9 @@ router.get('/voters/pending', async function (req, res, next) {
     res.json(await dbUtils.dbObj(db, '0', '1'));
 });
 
+/** active voters list **/
+router.get('/voters/active', async function (req, res, next) {
+    res.json(await dbUtils.dbObj(db, '1', '2'));
+});
+
 module.exports = router;
