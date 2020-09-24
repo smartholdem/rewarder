@@ -188,8 +188,9 @@ const cronPayment = schedule.scheduleJob(rule, async function () {
     daysLeft--;
     console.log('daysLeft', daysLeft)
     if (daysLeft < 1) {
-        daysLeft = config.day
-        await reward.runPayments()
+        daysLeft = config.day;
+        await reward.updateVoters();
+        await reward.runPayments();
     }
     jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
 });
