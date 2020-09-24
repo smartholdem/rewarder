@@ -124,6 +124,11 @@ class Reward {
         return fees
     }
 
+    async removeUnVoted(currentVoters) {
+        let activeVotersArray = await dbUtils.dbArray(db, '1', '2'); // as array
+
+    }
+
     async updateVoters() {
         console.log('updateVoters')
         let dt = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * this.options.daysPending;
@@ -137,11 +142,11 @@ class Reward {
         let activeVotersArray = await dbUtils.dbArray(db, '1', '2'); // as array
 
         for (let i = 0; i < voters.length; i++) {
-            let keyPVoter = '0x' +voters[i].address
+            let keyPVoter = '0x' + voters[i].address;
             if (pendingVoters[keyPVoter]) {
                 if (dt > pendingVoters[keyPVoter].timestamp) {
                     /** set to active voter **/
-                    await db.put('1x' + voters[i].address, {
+                    let active = {
                         username: voters[i].username,
                         address: voters[i].address,
                         publicKey: voters[i].publicKey,
@@ -150,14 +155,16 @@ class Reward {
                         percent: 0,
                         waitPay: 0,
                         totalPay: 0,
-                    });
-                    console.log('set active', voters[i].address)
+                    };
+                    await db.put('1x' + voters[i].address, active);
+                    console.log('set active', voters[i].address);
                     await db.del('0x' + voters[i].address); // remove voter from pending
+                    activeVotersArray.push(active)
                 }
             }
 
             /** Update real balance Active voters **/
-            let keyAVoter = '1x' +voters[i].address
+            let keyAVoter = '1x' + voters[i].address;
             if (activeVoters[keyAVoter]) {
                 let activeVoter = {
                     username: voters[i].username,
@@ -175,6 +182,7 @@ class Reward {
             }
 
             /** Remove from active if unvote **/
+
             let removeVote = true;
             for (let j = 0; j < activeVotersArray.length; j++) {
                 if (activeVotersArray[j].address === voters[i].address) {
@@ -255,22 +263,22 @@ const cronPayment = schedule.scheduleJob(rule, async function () {
 
 /** CRON Voters **/
 const ruleVoters = new schedule.RecurrenceRule();
-ruleVoters.minute = 10; //default 30 (0 - 59)
+ruleVoters.minute = 44; //default 30 (0 - 59)
 const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
     console.log('cronVoters');
     let voters = await reward.getDelegateVoters();
     let pendingVoters = await dbUtils.dbObj(db, '0', '1');
     let activeVoters = await dbUtils.dbObj(db, '1', '2');
     for (let i = 0; i < voters.length; i++) {
-        if (!activeVoters['1x' + voters[i].address] && !pendingVoters['0x' +voters[i].address]) {
-                await db.put('0x' + voters[i].address, {
-                    username: voters[i].username,
-                    address: voters[i].address,
-                    publicKey: voters[i].publicKey,
-                    balance: parseInt((voters[i].balance / 10 ** 8).toFixed(0)),
-                    timestamp: Math.floor(Date.now() / 1000),
-                });
-                console.log('new pending voter', voters[i]);
+        if (!activeVoters['1x' + voters[i].address] && !pendingVoters['0x' + voters[i].address]) {
+            await db.put('0x' + voters[i].address, {
+                username: voters[i].username,
+                address: voters[i].address,
+                publicKey: voters[i].publicKey,
+                balance: parseInt((voters[i].balance / 10 ** 8).toFixed(0)),
+                timestamp: Math.floor(Date.now() / 1000),
+            });
+            console.log('new pending voter', voters[i]);
         }
     }
 
@@ -278,7 +286,7 @@ const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
 
 });
 
-
+-
 /** delegate voters array**/
 router.get('/voters/current', async function (req, res, next) {
     res.json(await reward.getDelegateVoters());
