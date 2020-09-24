@@ -137,8 +137,9 @@ class Reward {
         let activeVotersArray = await dbUtils.dbArray(db, '1', '2'); // as array
 
         for (let i = 0; i < voters.length; i++) {
-            if (pendingVoters['0x' + voters[i].address]) {
-                if (dt > pendingVoters['0x' + voters[i].address].timestamp) {
+            let keyPVoter = '0x' +voters[i].address
+            if (pendingVoters[keyPVoter]) {
+                if (dt > pendingVoters[keyPVoter].timestamp) {
                     /** set to active voter **/
                     await db.put('1x' + voters[i].address, {
                         username: voters[i].username,
@@ -156,16 +157,17 @@ class Reward {
             }
 
             /** Update real balance Active voters **/
-            if (activeVoters['1x' +voters[i].address]) {
+            let keyAVoter = '1x' +voters[i].address
+            if (activeVoters[keyAVoter]) {
                 let activeVoter = {
                     username: voters[i].username,
                     address: voters[i].address,
                     publicKey: voters[i].publicKey,
                     balance: parseInt((voters[i].balance / 10 ** 8).toFixed(0)),
-                    timestamp: activeVoters[voters[i].address].timestamp,
-                    percent: activeVoters[voters[i].address].percent,
-                    waitPay: activeVoters[voters[i].address].waitPay,
-                    totalPay: activeVoters[voters[i].address].totalPay,
+                    timestamp: activeVoters[keyAVoter].timestamp,
+                    percent: activeVoters[keyAVoter].percent,
+                    waitPay: activeVoters[keyAVoter].waitPay,
+                    totalPay: activeVoters[keyAVoter].totalPay,
                 };
 
 
