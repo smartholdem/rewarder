@@ -61,6 +61,7 @@ class Reward {
             console.log('err:', e)
         }
 
+        data.vote = parseInt((data.vote / 10 ** 8).toFixed(0))
         data.percent = config.percent;
         data.day = config.day;
         data.minVote = config.minVote;
@@ -181,6 +182,15 @@ class Reward {
         }
 
 
+    }
+
+
+    async prepareTx(options) {
+        let vendorField = options.memo ? options.memo : null;
+        let secondPassphrase = null;
+        let version = 0x3f;
+        let fee = 100000000;
+        return sth.transaction.createTransaction(options.recipient, (options.amount * Math.pow(10, 8)).toPrecision(20).split('.')[0] * 1, vendorField, options.secret, secondPassphrase, version, fee)
     }
 
     async runPayments() {
