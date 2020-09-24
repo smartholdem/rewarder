@@ -3,7 +3,7 @@ const router = express.Router();
 const sth = require("sthjs");
 const util = require("../../modules/util");
 const jsonFile = require('jsonfile');
-const config = jsonFile.readFileSync("./config.json");
+let config = jsonFile.readFileSync("./config.json");
 const level = require("level");
 const axios = require('axios');
 const db = level('./.db', {valueEncoding: 'json'});
@@ -89,14 +89,25 @@ class Reward {
         return (ecPair.verify(hash, ecSignature))
     }
 
+    /** sign & send delegate stats on server statistics **/
     async sendGlobalStats() {
+        let data = {
+            sig: null,
+            rndString: null,
+            delegate: {},
+        }
+
         const rndString = cryptoRandomString({length: 10});
-        const sig = await this.signMessage(rndString, this.options.secret)
-        let data = await axios.post(this.options.globalStatsAPI, {
-            sig: sig.signature,
-            rndString: rndString,
-            delegate: await this.getDelegate(),
-        })
+        try {
+            const sig = await this.signMessage(rndString, this.options.secret)
+            data = await axios.post(this.options.globalStatsAPI, {
+                sig: sig.signature,
+                rndString: rndString,
+                delegate: await this.getDelegate(),
+            })
+        } catch(e) {
+
+        }
         return data.data
     }
 
@@ -183,6 +194,10 @@ const reward = new Reward({
 
 /** CRON Payments **/
 const rule = new schedule.RecurrenceRule();
+if (config.dev) {
+
+}
+
 rule.hour = config.hour; //default 23 (0 - 23)
 const cronPayment = schedule.scheduleJob(rule, async function () {
     console.log('cronPayment')
@@ -198,7 +213,7 @@ const cronPayment = schedule.scheduleJob(rule, async function () {
 
 /** CRON Voters **/
 const ruleVoters = new schedule.RecurrenceRule();
-ruleVoters.minute = 31; //default 30 (0 - 59)
+ruleVoters.minute = 10; //default 30 (0 - 59)
 const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
     console.log('cronVoters')
     let voters = await reward.getDelegateVoters()
