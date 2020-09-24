@@ -125,6 +125,7 @@ class Reward {
     }
 
     async updateVoters() {
+        console.log('updateVoters')
         let dt = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * this.options.daysPending;
         if (config.dev) {
             dt = Math.floor(Date.now() / 1000) - 60 * 5; // 5 min on dev pending
@@ -136,35 +137,39 @@ class Reward {
         let activeVotersArray = await dbUtils.dbArray(db, '1', '2'); // as array
 
         for (let i = 0; i < voters.length; i++) {
-            if (pendingVoters[voters[i].address]) {
-                if (dt > pendingVoters[voters[i].address].timestamp) {
+            if (pendingVoters['0x' + voters[i].address]) {
+                if (dt > pendingVoters['0x' + voters[i].address].timestamp) {
                     /** set to active voter **/
                     await db.put('1x' + voters[i].address, {
                         username: voters[i].username,
                         address: voters[i].address,
                         publicKey: voters[i].publicKey,
-                        balance: voters[i].balance,
+                        balance: parseInt((voters[i].balance / 10 ** 8).toFixed(0)),
                         timestamp: Math.floor(Date.now() / 1000),
                         percent: 0,
                         waitPay: 0,
                         totalPay: 0,
                     });
+                    console.log('set active', voters[i].address)
                     await db.del('0x' + voters[i].address); // remove voter from pending
                 }
             }
 
             /** Update real balance Active voters **/
-            if (activeVoters[voters[i].address]) {
-                await db.put('1x' + voters[i].address, {
+            if (activeVoters['1x' +voters[i].address]) {
+                let activeVoter = {
                     username: voters[i].username,
                     address: voters[i].address,
                     publicKey: voters[i].publicKey,
-                    balance: voters[i].balance,
+                    balance: parseInt((voters[i].balance / 10 ** 8).toFixed(0)),
                     timestamp: activeVoters[voters[i].address].timestamp,
                     percent: activeVoters[voters[i].address].percent,
                     waitPay: activeVoters[voters[i].address].waitPay,
                     totalPay: activeVoters[voters[i].address].totalPay,
-                });
+                };
+
+
+                await db.put('1x' + voters[i].address, activeVoter);
             }
 
             /** Remove from active if unvote **/
@@ -255,17 +260,15 @@ const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
     let pendingVoters = await dbUtils.dbObj(db, '0', '1');
     let activeVoters = await dbUtils.dbObj(db, '1', '2');
     for (let i = 0; i < voters.length; i++) {
-        if (!activeVoters[voters[i].address]) {
-            if (!pendingVoters[voters[i].address]) {
+        if (!activeVoters['1x' + voters[i].address] && !pendingVoters['0x' +voters[i].address]) {
                 await db.put('0x' + voters[i].address, {
                     username: voters[i].username,
                     address: voters[i].address,
                     publicKey: voters[i].publicKey,
-                    balance: voters[i].balance,
+                    balance: parseInt((voters[i].balance / 10 ** 8).toFixed(0)),
                     timestamp: Math.floor(Date.now() / 1000),
                 });
                 console.log('new pending voter', voters[i]);
-            }
         }
     }
 
