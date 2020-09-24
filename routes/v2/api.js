@@ -10,19 +10,19 @@ const db = level('./.db', {valueEncoding: 'json'});
 const emitter = require('../../emitter');
 const crypto = require("crypto");
 const cryptoRandomString = require('crypto-random-string');
-const schedule = require('node-schedule')
-const DbUtils = require('../../modules/dbUtils')
-const dbUtils = new DbUtils()
-let daysLeft = -1
+const schedule = require('node-schedule');
+const DbUtils = require('../../modules/dbUtils');
+const dbUtils = new DbUtils();
+let daysLeft = -1;
 
 try {
     daysLeft = jsonFile.readFileSync("./daysLeft.json").days;
 } catch (e) {
-    daysLeft = config.day
+    daysLeft = config.day;
     jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
 }
 
-console.log('daysLeft', daysLeft)
+console.log('daysLeft', daysLeft);
 
 
 // 0x - pending Voters
@@ -44,7 +44,7 @@ class Reward {
     }
 
     async getDelegateVoters() {
-        let data = []
+        let data = [];
         try {
             data = (await axios.get('http://' + config.node + ':6100/api/delegates/voters?publicKey=' + this.options.publicKey)).data.accounts
         } catch (e) {
@@ -54,38 +54,38 @@ class Reward {
     }
 
     async getDelegate() {
-        let data = {}
+        let data = {};
         try {
             data = (await axios.get('http://' + config.node + ':6100/api/delegates/get?publicKey=' + this.options.publicKey)).data.delegate
         } catch (e) {
             console.log('err:', e)
         }
 
-        data.percent = config.percent
-        data.day = config.day
-        data.minVote = config.minVote
+        data.percent = config.percent;
+        data.day = config.day;
+        data.minVote = config.minVote;
 
         return data
     }
 
     async signMessage(message, passphrase) {
-        let hash = crypto.createHash('sha256')
-        hash = hash.update(Buffer.from(message, 'utf-8')).digest()
-        const ecPair = sth.crypto.getKeys(passphrase)
+        let hash = crypto.createHash('sha256');
+        hash = hash.update(Buffer.from(message, 'utf-8')).digest();
+        const ecPair = sth.crypto.getKeys(passphrase);
         return ({signature: ecPair.sign(hash).toDER().toString('hex')}) // obj.signature
     }
 
     async verifyMessage(message, publicKey, signature) {
         // check for hexadecimal, otherwise the signature check would may fail
-        const re = /[0-9A-Fa-f]{6}/g
+        const re = /[0-9A-Fa-f]{6}/g;
         if (!re.test(publicKey) || !re.test(signature)) {
             // return here already because the process will fail otherwise
             return false
         }
-        let hash = crypto.createHash('sha256')
-        hash = hash.update(Buffer.from(message, 'utf-8')).digest()
-        const ecPair = sth.ECPair.fromPublicKeyBuffer(Buffer.from(publicKey, 'hex'))
-        const ecSignature = sth.ECSignature.fromDER(Buffer.from(signature, 'hex'))
+        let hash = crypto.createHash('sha256');
+        hash = hash.update(Buffer.from(message, 'utf-8')).digest();
+        const ecPair = sth.ECPair.fromPublicKeyBuffer(Buffer.from(publicKey, 'hex'));
+        const ecSignature = sth.ECSignature.fromDER(Buffer.from(signature, 'hex'));
         return (ecPair.verify(hash, ecSignature))
     }
 
@@ -95,24 +95,24 @@ class Reward {
             sig: null,
             rndString: null,
             delegate: {},
-        }
+        };
 
         const rndString = cryptoRandomString({length: 10});
         try {
-            const sig = await this.signMessage(rndString, this.options.secret)
+            const sig = await this.signMessage(rndString, this.options.secret);
             data = await axios.post(this.options.globalStatsAPI, {
                 sig: sig.signature,
                 rndString: rndString,
                 delegate: await this.getDelegate(),
             })
-        } catch(e) {
+        } catch (e) {
 
         }
         return data.data
     }
 
     async getNetworkFees() {
-        let fees = {}
+        let fees = {};
         try {
             fees = (await axios.get('http://' + config.node + ':6100/api/blocks/getFees')).data.fees
         } catch (e) {
@@ -123,10 +123,14 @@ class Reward {
 
     async updateVoters() {
         let dt = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * this.options.daysPending;
-        let voters = await reward.getDelegateVoters()
-        let pendingVoters = await dbUtils.dbObj(db, '0', '1')
-        let activeVoters = await dbUtils.dbObj(db, '1', '2')
-        let activeVotersArray = await dbUtils.dbArray(db, '1', '2')
+        if (config.dev) {
+            dt = Math.floor(Date.now() / 1000) - 60 * 5; // 5 min on dev pending
+        }
+
+        let voters = await reward.getDelegateVoters();
+        let pendingVoters = await dbUtils.dbObj(db, '0', '1'); //as objects
+        let activeVoters = await dbUtils.dbObj(db, '1', '2'); //as objects
+        let activeVotersArray = await dbUtils.dbArray(db, '1', '2'); // as array
 
         for (let i = 0; i < voters.length; i++) {
             if (pendingVoters[voters[i].address]) {
@@ -161,7 +165,7 @@ class Reward {
             }
 
             /** Remove from active if unvote **/
-            let removeVote = true
+            let removeVote = true;
             for (let j = 0; j < activeVotersArray.length; j++) {
                 if (activeVotersArray[j].address === voters[i].address) {
                     removeVote = false;
@@ -200,9 +204,9 @@ if (config.dev) {
 
 rule.hour = config.hour; //default 23 (0 - 23)
 const cronPayment = schedule.scheduleJob(rule, async function () {
-    console.log('cronPayment')
+    console.log('cronPayment');
     daysLeft--;
-    console.log('daysLeft', daysLeft)
+    console.log('daysLeft', daysLeft);
     if (daysLeft < 1) {
         daysLeft = config.day;
         await reward.updateVoters();
@@ -215,10 +219,10 @@ const cronPayment = schedule.scheduleJob(rule, async function () {
 const ruleVoters = new schedule.RecurrenceRule();
 ruleVoters.minute = 10; //default 30 (0 - 59)
 const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
-    console.log('cronVoters')
-    let voters = await reward.getDelegateVoters()
-    let pendingVoters = await dbUtils.dbObj(db, '0', '1')
-    let activeVoters = await dbUtils.dbObj(db, '1', '2')
+    console.log('cronVoters');
+    let voters = await reward.getDelegateVoters();
+    let pendingVoters = await dbUtils.dbObj(db, '0', '1');
+    let activeVoters = await dbUtils.dbObj(db, '1', '2');
     for (let i = 0; i < voters.length; i++) {
         if (!activeVoters[voters[i].address]) {
             if (!pendingVoters[voters[i].address]) {
@@ -229,7 +233,7 @@ const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
                     balance: voters[i].balance,
                     timestamp: Math.floor(Date.now() / 1000),
                 });
-                console.log('voters', voters);
+                console.log('new pending voter', voters[i]);
             }
         }
     }
@@ -240,7 +244,7 @@ const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
 
 
 /** delegate voters array**/
-router.get('/voters', async function (req, res, next) {
+router.get('/voters/current', async function (req, res, next) {
     res.json(await reward.getDelegateVoters());
 });
 
@@ -262,6 +266,12 @@ router.get('/sig', async function (req, res, next) {
 /** read objs by keys **/
 router.get('/db/:from/:to', async function (req, res, next) {
     res.json(await dbUtils.dbObj(db, req.params["from"], req.params["to"]));
+});
+
+
+/** pending voters list **/
+router.get('/voters/pending', async function (req, res, next) {
+    res.json(await dbUtils.dbObj(db, '0', '1'));
 });
 
 module.exports = router;
