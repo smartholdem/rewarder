@@ -193,6 +193,29 @@ class Reward {
         return sth.transaction.createTransaction(options.recipient, (options.amount * Math.pow(10, 8)).toPrecision(20).split('.')[0] * 1, vendorField, options.secret, secondPassphrase, version, fee)
     }
 
+    async broadcastTxs(txs = []) {
+        let result = {
+            success: false,
+            transactionIds: [],
+        }
+        try {
+            const data = await axios.post('http://' + config.node + ':6100' + '/peer/transactions', {transactions: txs}, {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "os": "sth-client",
+                        "version": "0.6.0",
+                        "nethash": 'fc46bfaf9379121dd6b09f5014595c7b7bd52a0a6d57c5aff790b42a73c76da7',
+                        "port": 6100
+                    },
+                }
+            )
+            result = data.data
+        } catch (e) {
+
+        }
+        return result
+    }
+
     async runPayments() {
 
     }
