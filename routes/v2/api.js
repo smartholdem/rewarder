@@ -64,6 +64,7 @@ class Reward {
         data.percent = config.percent;
         data.day = config.day;
         data.minVote = config.minVote;
+        data.daysLeft = daysLeft;
 
         return data
     }
@@ -198,10 +199,6 @@ const reward = new Reward({
 
 /** CRON Payments **/
 const rule = new schedule.RecurrenceRule();
-if (config.dev) {
-
-}
-
 rule.hour = config.hour; //default 23 (0 - 23)
 const cronPayment = schedule.scheduleJob(rule, async function () {
     console.log('cronPayment');
