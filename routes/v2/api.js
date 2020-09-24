@@ -66,6 +66,7 @@ class Reward {
         data.day = config.day;
         data.minVote = config.minVote;
         data.daysLeft = daysLeft;
+        data.port = config.port;
 
         return data
     }
