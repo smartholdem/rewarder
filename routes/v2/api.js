@@ -17,7 +17,7 @@ let daysLeft = -1
 
 try {
     daysLeft = jsonFile.readFileSync("./daysLeft.json").days;
-} catch(e) {
+} catch (e) {
     daysLeft = config.day
     jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
 }
@@ -113,10 +113,11 @@ class Reward {
     async updateVoters() {
         let dt = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * this.options.daysPending;
         let voters = await reward.getDelegateVoters()
-        let pendingVoters = await dbUtils.dbObj(db, '0' , '1')
-        let activeVoters = await dbUtils.dbObj(db, '1' , '2')
+        let pendingVoters = await dbUtils.dbObj(db, '0', '1')
+        let activeVoters = await dbUtils.dbObj(db, '1', '2')
+        let activeVotersArray = await dbUtils.dbArray(db, '1', '2')
 
-        for (let i=0; i < voters.length; i++) {
+        for (let i = 0; i < voters.length; i++) {
             if (pendingVoters[voters[i].address]) {
                 if (dt > pendingVoters[voters[i].address].timestamp) {
                     /** set to active voter **/
@@ -127,11 +128,37 @@ class Reward {
                         balance: voters[i].balance,
                         timestamp: Math.floor(Date.now() / 1000),
                         percent: 0,
-                        amount: 0,
-
+                        waitPay: 0,
+                        totalPay: 0,
                     });
-                    await db.del('0x' + voters[i].address) // remove voter from pending
+                    await db.del('0x' + voters[i].address); // remove voter from pending
                 }
+            }
+
+            /** Update real balance Active voters **/
+            if (activeVoters[voters[i].address]) {
+                await db.put('1x' + voters[i].address, {
+                    username: voters[i].username,
+                    address: voters[i].address,
+                    publicKey: voters[i].publicKey,
+                    balance: voters[i].balance,
+                    timestamp: activeVoters[voters[i].address].timestamp,
+                    percent: activeVoters[voters[i].address].percent,
+                    waitPay: activeVoters[voters[i].address].waitPay,
+                    totalPay: activeVoters[voters[i].address].totalPay,
+                });
+            }
+
+            /** Remove from active if unvote **/
+            let removeVote = true
+            for (let j = 0; j < activeVotersArray.length; j++) {
+                if (activeVotersArray[j].address === voters[i].address) {
+                    removeVote = false;
+                    break;
+                }
+            }
+            if (removeVote) {
+                await db.del('1x' + voters[i].address);
             }
 
 
@@ -157,7 +184,7 @@ const reward = new Reward({
 /** CRON Payments **/
 const rule = new schedule.RecurrenceRule();
 rule.hour = config.hour; //default 23 (0 - 23)
-const cronPayment = schedule.scheduleJob(rule, async function(){
+const cronPayment = schedule.scheduleJob(rule, async function () {
     daysLeft--;
     console.log('daysLeft', daysLeft)
     if (daysLeft < 1) {
@@ -170,11 +197,11 @@ const cronPayment = schedule.scheduleJob(rule, async function(){
 /** CRON Voters **/
 const ruleVoters = new schedule.RecurrenceRule();
 ruleVoters.minute = 31; //default 30 (0 - 59)
-const cronVoters = schedule.scheduleJob(ruleVoters, async function(){
+const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
     let voters = await reward.getDelegateVoters()
-    let pendingVoters = await dbUtils.dbObj(db, '0' , '1')
-    let activeVoters = await dbUtils.dbObj(db, '1' , '2')
-    for (let i=0; i < voters.length; i++) {
+    let pendingVoters = await dbUtils.dbObj(db, '0', '1')
+    let activeVoters = await dbUtils.dbObj(db, '1', '2')
+    for (let i = 0; i < voters.length; i++) {
         if (!activeVoters[voters[i].address]) {
             if (!pendingVoters[voters[i].address]) {
                 await db.put('0x' + voters[i].address, {
@@ -183,10 +210,8 @@ const cronVoters = schedule.scheduleJob(ruleVoters, async function(){
                     publicKey: voters[i].publicKey,
                     balance: voters[i].balance,
                     timestamp: Math.floor(Date.now() / 1000),
-                    percent: 0,
-                    amount: 0,
                 });
-                console.log('voters',voters);
+                console.log('voters', voters);
             }
         }
     }
@@ -216,7 +241,7 @@ router.get('/sig', async function (req, res, next) {
 
 /** read objs by keys **/
 router.get('/db/:from/:to', async function (req, res, next) {
-    res.json(await dbUtils.dbObj(db, req.params["from"] , req.params["to"]));
+    res.json(await dbUtils.dbObj(db, req.params["from"], req.params["to"]));
 });
 
 module.exports = router;
