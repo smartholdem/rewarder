@@ -216,6 +216,8 @@ const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
         }
     }
 
+    await reward.updateVoters()
+
 });
 
 
