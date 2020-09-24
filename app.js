@@ -8,8 +8,8 @@ const appConfig = jsonFile.readFileSync('./config.json'); // конфиг
 process.env.PORT = appConfig.port;
 console.log("Running on port:", process.env.PORT);
 
-const indexRouter = require('./routes/index');
-const rewarderRouter = require('./routes/rewarder');
+//const indexRouter = require('./routes/index');
+//const rewarderRouter = require('./routes/rewarder');
 
 const apiRouter = require('./routes/v2/api');
 
@@ -27,8 +27,8 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use('/', indexRouter);
-app.use('/rewarder', rewarderRouter);
+//app.use('/', indexRouter);
+//app.use('/rewarder', rewarderRouter);
 
 app.use('/v2/api', apiRouter);
 
