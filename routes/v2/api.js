@@ -27,6 +27,7 @@ console.log('daysLeft', daysLeft);
 
 // 0x - pending Voters
 // 1x - active Voters
+// DELEGATE
 // 2x - Stats
 // 3x - Payouts
 
@@ -117,7 +118,7 @@ class Reward {
             data = await axios.post(this.options.globalStatsAPI, {
                 sig: sig.signature,
                 rndString: rndString,
-                delegate: await this.getDelegate(),
+                info: await this.totalInfo(),
             })
         } catch (e) {
 
@@ -434,8 +435,7 @@ router.get('/pay', async function (req, res, next) {
 
 
 router.get('/total-info', async function (req, res, next) {
-
-    res.json(result)
+    res.json(await reward.totalInfo())
 });
 
 
