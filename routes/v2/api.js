@@ -237,7 +237,14 @@ class Reward {
         return result
     }
 
-
+    async calcPercents() {
+        let delegate = await dbUtils.dbGet(db, 'DELEGATE');
+        let voters = await dbUtils.dbArray(db, '1', '2');
+        for (let i=0; i < voters.length; i++) {
+            voters[i].percent = (100 / delegate.vote * voters[i].balance).toFixed(4) * 1;
+            await db.put('1x' + voters[i].address, voters[i])
+        }
+    }
 
     async runPayments() {
         let delegate = await dbUtils.dbGet(db, 'DELEGATE');
@@ -326,7 +333,8 @@ schedule.scheduleJob("1 */20 * * * *", async () => {
 
 /** CRON Delegate every 9 minutes **/
 schedule.scheduleJob("1 */9 * * * *", async () => {
-    await reward.statsDelegate()
+    await reward.statsDelegate();
+    await reward.calcPercents() ;
 });
 
 
