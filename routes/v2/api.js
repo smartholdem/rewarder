@@ -53,6 +53,16 @@ class Reward {
         return data
     }
 
+    async getForged() {
+        let data = {};
+        try {
+            data = (await axios.get('http://' + config.node + ':6100/api/delegates/forging/getForgedByAccount?generatorPublicKey=' + this.options.publicKey)).data
+        } catch (e) {
+            console.log('err:', e)
+        }
+        return data
+    }
+
     async getDelegate() {
         let data = {};
         try {
@@ -67,6 +77,7 @@ class Reward {
         data.minVote = config.minVote;
         data.daysLeft = daysLeft;
         data.port = config.port;
+        
 
         return data
     }
@@ -284,7 +295,7 @@ const cronPayment = schedule.scheduleJob(rule, async function () {
 
 /** CRON Voters **/
 const ruleVoters = new schedule.RecurrenceRule();
-ruleVoters.minute = 44; //default 30 (0 - 59)
+ruleVoters.minute = 20; //default 30 (0 - 59)
 const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
     //console.log('cronVoters');
     await reward.cronVoters();
