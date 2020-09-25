@@ -251,8 +251,8 @@ class Reward {
         let delegate = await dbUtils.dbGet(db, 'DELEGATE');
         let voters = await dbUtils.dbArray(db, '1', '2');
         let forPay = delegate.roundForged * (config.percent / 100);
+        let preparedTxs = [];
         if (delegate.roundForged > voters.length * 2) {
-            let preparedTxs = [];
             for (let i = 0; i < voters.length; i++) {
                 preparedTxs.push(await this.prepareTx({
                     amount: voters[i].waitPay,
@@ -261,6 +261,7 @@ class Reward {
                 }))
             }
         }
+        return(preparedTxs)
     }
 
     async cronVoters() {
@@ -386,5 +387,16 @@ router.get('/voters/pending', async function (req, res, next) {
 router.get('/voters/active', async function (req, res, next) {
     res.json(await dbUtils.dbObj(db, '1', '2'));
 });
+
+/** manual payments for test **/
+router.get('/pay', async function (req, res, next) {
+    if (config.dev) {
+        res.json(await reward.runPayments());
+    } else {
+        res.json(false)
+    }
+});
+
+
 
 module.exports = router;
