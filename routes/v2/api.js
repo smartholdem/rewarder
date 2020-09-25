@@ -77,7 +77,7 @@ class Reward {
         data.minVote = config.minVote;
         data.daysLeft = daysLeft;
         data.port = config.port;
-        
+        data.totalForged = (await this.getForged()).forged / 10 ** 8;
 
         return data
     }
@@ -301,8 +301,6 @@ const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
     await reward.cronVoters();
     await reward.updateVoters();
 });
-
-
 
 
 /** delegate voters array**/
