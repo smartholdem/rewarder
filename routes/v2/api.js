@@ -187,10 +187,8 @@ class Reward {
         }
 
         /** Remove from active if unvote **/
-
-        let removeVote = true;
-
         for (let j = 0; j < activeVotersArray.length; j++) {
+            let removeVote = true;
             for (let i=0; i < voters.length; i++) {
                 if (activeVotersArray[j].address === voters[i].address) {
                     removeVote = false;
