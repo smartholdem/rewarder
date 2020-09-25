@@ -182,26 +182,28 @@ class Reward {
                     waitPay: activeVoters[keyAVoter].waitPay,
                     totalPay: activeVoters[keyAVoter].totalPay,
                 };
-
                 await db.put('1x' + voters[i].address, activeVoter);
             }
+        }
 
-            /** Remove from active if unvote **/
+        /** Remove from active if unvote **/
 
-            let removeVote = true;
-            for (let j = 0; j < activeVotersArray.length; j++) {
+        let removeVote = true;
+
+        for (let j = 0; j < activeVotersArray.length; j++) {
+            for (let i=0; i < voters.length; i++) {
                 if (activeVotersArray[j].address === voters[i].address) {
                     removeVote = false;
                     break;
                 }
             }
+
             if (removeVote) {
-                console.log('remove voter', voters[i].address);
-                await db.del('1x' + voters[i].address);
+                console.log('remove voter', activeVotersArray[j].address);
+                await db.del('1x' + activeVotersArray[j].address);
             }
-
-
         }
+
 
 
     }
