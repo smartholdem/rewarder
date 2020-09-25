@@ -139,7 +139,7 @@ class Reward {
         //console.log('updateVoters')
         let dt = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * this.options.daysPending;
         if (config.dev) {
-            dt = Math.floor(Date.now() / 1000) - 60 * 5; // 5 min on dev pending
+            dt = Math.floor(Date.now() / 1000) - 60 * 5; // 5min on dev pending
         }
 
         let voters = await reward.getDelegateVoters();
@@ -196,6 +196,7 @@ class Reward {
                 }
             }
             if (removeVote) {
+                console.log('remove voter', voters[i].address);
                 await db.del('1x' + voters[i].address);
             }
 
@@ -273,7 +274,6 @@ class Reward {
             }
         }
 
-
         let successTxs = [];
         if (voters.length) {
             successTxs = await this.broadcastTxs(preparedTxs);
@@ -292,6 +292,7 @@ class Reward {
         let activeVoters = await dbUtils.dbObj(db, '1', '2');
         for (let i = 0; i < voters.length; i++) {
             if (!activeVoters['1x' + voters[i].address] && !pendingVoters['0x' + voters[i].address]) {
+                /** set in pending voter **/
                 await db.put('0x' + voters[i].address, {
                     username: voters[i].username,
                     address: voters[i].address,
@@ -362,8 +363,8 @@ schedule.scheduleJob("1 */20 * * * *", async () => {
 });
 
 
-/** CRON Delegate every 9 minutes **/
-schedule.scheduleJob("1 */9 * * * *", async () => {
+/** CRON Delegate every 11 minutes **/
+schedule.scheduleJob("1 */11 * * * *", async () => {
     await reward.statsDelegate();
     await reward.calcPercents();
 });
