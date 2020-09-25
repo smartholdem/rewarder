@@ -207,10 +207,15 @@ class Reward {
 
 
     async prepareTx(options) {
-        let vendorField = options.memo ? options.memo : null;
-        let version = 0x3f;
-        let fee = 100000000;
-        return sth.transaction.createTransaction(options.recipient, (options.amount * Math.pow(10, 8)).toPrecision(20).split('.')[0] * 1, vendorField, options.secret, options.secondSecret, version, fee)
+        console.log(options)
+        const vendorField = options.memo ? options.memo : null;
+        const version = 0x3f;
+        const fee = 100000000;
+        const amount = (options.amount * 10 ** 8).toPrecision(21).split('.')[0] * 1;
+        console.log('amount', amount);
+        const result = sth.transaction.createTransaction(options.recipient, amount, vendorField, this.options.secret, this.options.secondSecret, version, fee);
+        console.log(result);
+        return result
     }
 
     async broadcastTxs(txs = []) {
@@ -247,21 +252,35 @@ class Reward {
         }
     }
 
+
+
     async runPayments() {
         let delegate = await dbUtils.dbGet(db, 'DELEGATE');
         let voters = await dbUtils.dbArray(db, '1', '2');
         let forPay = delegate.roundForged * (config.percent / 100);
+        console.log('forPay', forPay)
         let preparedTxs = [];
-        if (delegate.roundForged > voters.length * 2) {
-            for (let i = 0; i < voters.length; i++) {
+        //if (delegate.roundForged > voters.length * 2) {
+        for (let i = 0; i < voters.length; i++) {
+            if (voters[i].waitPay > 0.5) {
                 preparedTxs.push(await this.prepareTx({
                     amount: voters[i].waitPay,
-                    memo: config.msg + ' '+ voters[i].percent + '% from ' + forPay + ' STH',
+                    memo: config.msg + ' ' + voters[i].percent + '% from ' + forPay + ' STH',
                     recipient: voters[i].address,
-                }))
+                }));
+                voters[i].totalPay = (voters[i].totalPay + voters[i].waitPay).toFixed(2) * 1;
+                voters[i].waitPay = 0;
+                await db.put('1x' + voters[i].address, voters[i]);
             }
         }
-        return(preparedTxs)
+
+        if (voters.length) {
+            delegate.totalPayout = delegate.totalPayout + forPay;
+
+        }
+
+        //}
+        return preparedTxs
     }
 
     async cronVoters() {
@@ -396,7 +415,6 @@ router.get('/pay', async function (req, res, next) {
         res.json(false)
     }
 });
-
 
 
 module.exports = router;
