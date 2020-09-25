@@ -240,9 +240,10 @@ class Reward {
     async calcPercents() {
         let delegate = await dbUtils.dbGet(db, 'DELEGATE');
         let voters = await dbUtils.dbArray(db, '1', '2');
+        let forPay = delegate.roundForged * (config.percent / 100);
         for (let i=0; i < voters.length; i++) {
             voters[i].percent = (100 / delegate.vote * voters[i].balance).toFixed(2) * 1;
-            voters[i].waitPay = (voters[i].percent / 100 * delegate.roundForged).toFixed(3) * 1;
+            voters[i].waitPay = (voters[i].percent / 100 * forPay).toFixed(3) * 1;
             await db.put('1x' + voters[i].address, voters[i])
         }
     }
@@ -285,6 +286,11 @@ class Reward {
             Delegate.totalPayout = 0;
             await db.put('DELEGATE', Delegate);
         } else {
+            statsDelegate.percent = Delegate.percent;
+            statsDelegate.day = Delegate.day;
+            statsDelegate.minVote = Delegate.minVote;
+            statsDelegate.daysLeft = Delegate.daysLeft;
+            statsDelegate.port = Delegate.port;
             statsDelegate.totalForged = Delegate.totalForged;
             statsDelegate.roundForged = (Delegate.totalForged - statsDelegate.startForged).toFixed(2) * 1;
             await db.put('DELEGATE', statsDelegate);
