@@ -203,6 +203,7 @@ class Reward {
         }
 
 
+        await this.calcPercents();
 
     }
 
@@ -301,6 +302,7 @@ class Reward {
                     timestamp: Math.floor(Date.now() / 1000),
                 });
                 console.log('new pending voter', voters[i]);
+                await this.calcPercents();
             }
         }
     }
