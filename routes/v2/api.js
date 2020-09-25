@@ -237,8 +237,17 @@ class Reward {
         return result
     }
 
-    async runPayments() {
 
+
+    async runPayments() {
+        let delegate = await dbUtils.dbGet(db, 'DELEGATE');
+        let voters = await dbUtils.dbArray(db, '1', '2');
+        if (delegate.roundForged > voters.length * 2) {
+            let preparedTxs = []
+            for (let i=0; i < voters.length; i++) {
+
+            }
+        }
     }
 
     async cronVoters() {
@@ -297,10 +306,10 @@ reward.init().then(function () {
 /** CRON Payments (sec=1 min=1 hour=1 day=*) **/
 /** run every day & dec daysLeft **/
 schedule.scheduleJob("1 1 1 * * *", async () => {
-    console.log('cronPayment');
     daysLeft--;
     console.log('daysLeft', daysLeft);
     if (daysLeft < 1) {
+        console.log('run payments');
         daysLeft = config.day;
         await reward.updateVoters();
         await reward.runPayments();
