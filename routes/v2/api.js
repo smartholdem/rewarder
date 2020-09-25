@@ -270,6 +270,7 @@ class Reward {
             delegate.totalPayout = delegate.totalPayout + forPay;
             delegate.startForged = delegate.totalForged;
             delegate.roundForged = 0;
+            await db.put('DELEGATE', delegate);
         }
 
         //}
