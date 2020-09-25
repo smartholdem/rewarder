@@ -273,15 +273,17 @@ class Reward {
             }
         }
 
+
+        let successTxs = [];
         if (voters.length) {
-            this.broadcastTxs(preparedTxs);
+            successTxs = await this.broadcastTxs(preparedTxs);
             delegate.totalPayout = delegate.totalPayout + forPay;
             delegate.startForged = delegate.totalForged;
             delegate.roundForged = 0;
         }
 
         //}
-        return preparedTxs
+        return successTxs
     }
 
     async cronVoters() {
