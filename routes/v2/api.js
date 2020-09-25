@@ -252,7 +252,7 @@ class Reward {
         let delegate = await dbUtils.dbGet(db, 'DELEGATE');
         let voters = await dbUtils.dbArray(db, '1', '2');
         if (delegate.roundForged > voters.length * 2) {
-            let preparedTxs = []
+            let preparedTxs = [];
             for (let i = 0; i < voters.length; i++) {
 
             }
@@ -285,8 +285,8 @@ class Reward {
             Delegate.roundForged = 0;
             Delegate.totalPayout = 0;
         } else {
-            Delegate.startForged = statsDelegate.startForged;
             Delegate.totalPayout = statsDelegate.totalPayout;
+            Delegate.startForged = statsDelegate.startForged;
             Delegate.roundForged = (Delegate.totalForged - statsDelegate.startForged).toFixed(2) * 1;
         }
         await db.put('DELEGATE', Delegate);
