@@ -259,9 +259,25 @@ class Reward {
         }
     }
 
+    async statsDelegate() {
+        let Delegate = await this.getDelegate();
+        let statsDelegate = await dbUtils.dbGet(db, 'DELEGATE');
+        if (!statsDelegate) {
+            Delegate.startForged = Delegate.totalForged;
+            Delegate.roundForged = 0;
+            Delegate.totalPayout = 0;
+            await db.put('DELEGATE', Delegate);
+        } else {
+            statsDelegate.totalForged = Delegate.totalForged;
+            statsDelegate.roundForged = (Delegate.totalForged - statsDelegate.startForged).toFixed(2) * 1;
+            await db.put('DELEGATE', statsDelegate);
+        }
+    }
+
     async init() {
         await this.cronVoters();
         await this.updateVoters();
+        await this.statsDelegate();
     }
 
 }
@@ -271,17 +287,16 @@ const reward = new Reward({
     secret: config.secret,
     globalStatsAPI: config.globalStatsAPI,
     daysPending: config.daysPending,
-})
+});
 
 
 reward.init().then(function () {
-    console.log('init')
+    console.log('init');
 });
 
-/** CRON Payments **/
-const rule = new schedule.RecurrenceRule();
-rule.hour = config.hour; //default 23 (0 - 23)
-const cronPayment = schedule.scheduleJob(rule, async function () {
+/** CRON Payments (sec=1 min=1 hour=1 day=*) **/
+/** run every day & dec daysLeft **/
+schedule.scheduleJob("1 1 1 * * *", async () => {
     console.log('cronPayment');
     daysLeft--;
     console.log('daysLeft', daysLeft);
@@ -290,16 +305,19 @@ const cronPayment = schedule.scheduleJob(rule, async function () {
         await reward.updateVoters();
         await reward.runPayments();
     }
-    jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft})
+    jsonFile.writeFileSync("./daysLeft.json", {days: daysLeft});
 });
 
-/** CRON Voters **/
-const ruleVoters = new schedule.RecurrenceRule();
-ruleVoters.minute = 20; //default 30 (0 - 59)
-const cronVoters = schedule.scheduleJob(ruleVoters, async function () {
-    //console.log('cronVoters');
+/** CRON Voters every 20 minutes **/
+schedule.scheduleJob("1 */20 * * * *", async () => {
     await reward.cronVoters();
     await reward.updateVoters();
+});
+
+
+/** CRON Delegate every 8 minutes **/
+schedule.scheduleJob("1 */8 * * * *", async () => {
+    await reward.statsDelegate()
 });
 
 
@@ -326,6 +344,10 @@ router.get('/sig', async function (req, res, next) {
 /** read objs by keys **/
 router.get('/db/:from/:to', async function (req, res, next) {
     res.json(await dbUtils.dbObj(db, req.params["from"], req.params["to"]));
+});
+
+router.get('/dbkey/:key', async function (req, res, next) {
+    res.json(await dbUtils.dbGet(db, req.params["key"]));
 });
 
 
