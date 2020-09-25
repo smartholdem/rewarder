@@ -315,8 +315,8 @@ schedule.scheduleJob("1 */20 * * * *", async () => {
 });
 
 
-/** CRON Delegate every 8 minutes **/
-schedule.scheduleJob("1 */8 * * * *", async () => {
+/** CRON Delegate every 9 minutes **/
+schedule.scheduleJob("1 */9 * * * *", async () => {
     await reward.statsDelegate()
 });
 
@@ -328,7 +328,8 @@ router.get('/voters/current', async function (req, res, next) {
 
 /** get current delegate info **/
 router.get('/delegate', async function (req, res, next) {
-    res.json(await reward.getDelegate());
+    //res.json(await reward.getDelegate());
+    res.json(await dbUtils.dbGet(db, 'DELEGATE'));
 });
 
 /** get network fees **/
