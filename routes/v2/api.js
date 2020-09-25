@@ -241,7 +241,8 @@ class Reward {
         let delegate = await dbUtils.dbGet(db, 'DELEGATE');
         let voters = await dbUtils.dbArray(db, '1', '2');
         for (let i=0; i < voters.length; i++) {
-            voters[i].percent = (100 / delegate.vote * voters[i].balance).toFixed(4) * 1;
+            voters[i].percent = (100 / delegate.vote * voters[i].balance).toFixed(2) * 1;
+            voters[i].waitPay = (voters[i].percent / 100 * delegate.roundForged).toFixed(3) * 1;
             await db.put('1x' + voters[i].address, voters[i])
         }
     }
@@ -294,6 +295,7 @@ class Reward {
         await this.cronVoters();
         await this.updateVoters();
         await this.statsDelegate();
+        await this.calcPercents();
     }
 
 }
@@ -334,7 +336,7 @@ schedule.scheduleJob("1 */20 * * * *", async () => {
 /** CRON Delegate every 9 minutes **/
 schedule.scheduleJob("1 */9 * * * *", async () => {
     await reward.statsDelegate();
-    await reward.calcPercents() ;
+    await reward.calcPercents();
 });
 
 
