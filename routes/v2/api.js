@@ -276,7 +276,8 @@ class Reward {
 
         if (voters.length) {
             delegate.totalPayout = delegate.totalPayout + forPay;
-
+            delegate.startForged = delegate.totalForged;
+            delegate.roundForged = 0;
         }
 
         //}
