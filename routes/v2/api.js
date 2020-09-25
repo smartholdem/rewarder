@@ -329,6 +329,16 @@ class Reward {
         await this.calcPercents();
     }
 
+    async totalInfo() {
+        return {
+            delegate: await dbUtils.dbGet(db, 'DELEGATE'),
+            voters: {
+                pending: await dbUtils.dbArray(db, '0', '1'),
+                active: await dbUtils.dbArray(db, '1', '2'),
+            }
+        }
+    }
+
 }
 
 const reward = new Reward({
@@ -424,13 +434,7 @@ router.get('/pay', async function (req, res, next) {
 
 
 router.get('/total-info', async function (req, res, next) {
-    let result = {
-        delegate: await dbUtils.dbGet(db, 'DELEGATE'),
-        voters: {
-            pending: await dbUtils.dbArray(db, '0', '1'),
-            active: await dbUtils.dbArray(db, '1', '2'),
-        }
-    }
+
     res.json(result)
 });
 
