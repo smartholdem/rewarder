@@ -208,10 +208,9 @@ class Reward {
 
     async prepareTx(options) {
         let vendorField = options.memo ? options.memo : null;
-        let secondPassphrase = null;
         let version = 0x3f;
         let fee = 100000000;
-        return sth.transaction.createTransaction(options.recipient, (options.amount * Math.pow(10, 8)).toPrecision(20).split('.')[0] * 1, vendorField, options.secret, secondPassphrase, version, fee)
+        return sth.transaction.createTransaction(options.recipient, (options.amount * Math.pow(10, 8)).toPrecision(20).split('.')[0] * 1, vendorField, options.secret, options.secondSecret, version, fee)
     }
 
     async broadcastTxs(txs = []) {
@@ -251,10 +250,15 @@ class Reward {
     async runPayments() {
         let delegate = await dbUtils.dbGet(db, 'DELEGATE');
         let voters = await dbUtils.dbArray(db, '1', '2');
+        let forPay = delegate.roundForged * (config.percent / 100);
         if (delegate.roundForged > voters.length * 2) {
             let preparedTxs = [];
             for (let i = 0; i < voters.length; i++) {
-
+                preparedTxs.push(await this.prepareTx({
+                    amount: voters[i].waitPay,
+                    memo: config.msg + ' '+ voters[i].percent + '% from ' + forPay + ' STH',
+                    recipient: voters[i].address,
+                }))
             }
         }
     }
@@ -304,6 +308,7 @@ class Reward {
 const reward = new Reward({
     publicKey: PUB_KEY,
     secret: config.secret,
+    secondSecret: config.secondSecret,
     globalStatsAPI: config.globalStatsAPI,
     daysPending: config.daysPending,
 });
