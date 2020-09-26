@@ -9,3 +9,4 @@ v.2
 - configuration updated
 - updated database structure
 - shell script update
+- crypto sig on auth
