@@ -127,10 +127,6 @@ class Reward {
     async updateVoters() {
         //console.log('updateVoters')
         let dt = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * this.options.daysPending;
-        if (config.dev) {
-            dt = Math.floor(Date.now() / 1000) - 60 * 5; // 5min on dev pending
-        }
-
         let voters = await reward.getDelegateVoters();
         let pendingVoters = await dbUtils.dbObj(db, '0', '1'); //as objects
         let activeVoters = await dbUtils.dbObj(db, '1', '2'); //as objects
@@ -252,9 +248,9 @@ class Reward {
         let preparedTxs = [];
         //if (delegate.roundForged > voters.length * 2) {
         for (let i = 0; i < voters.length; i++) {
-            if (voters[i].waitPay > 0.5) {
+            if (voters[i].waitPay > 1) {
                 preparedTxs.push(await this.prepareTx({
-                    amount: voters[i].waitPay,
+                    amount: (voters[i].waitPay - 1).toFixed(6), // minus fee 1 STH
                     memo: config.msg + ' ' + voters[i].percent + '% from ' + forPay + ' STH',
                     recipient: voters[i].address,
                 }));
