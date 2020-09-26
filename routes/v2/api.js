@@ -77,6 +77,7 @@ class Reward {
         data.day = config.day;
         data.minVote = config.minVote;
         data.daysLeft = daysLeft;
+        data.daysPending = config.daysPending;
         data.port = config.port;
         data.totalForged = (await this.getForged()).forged / 10 ** 8;
 
@@ -89,7 +90,6 @@ class Reward {
         const ecPair = sth.crypto.getKeys(passphrase);
         return ({signature: ecPair.sign(hash).toDER().toString('hex')}) // obj.signature
     }
-
 
 
     /** sign & send delegate stats on server statistics **/
@@ -174,7 +174,7 @@ class Reward {
         /** Remove from active if unvote **/
         for (let j = 0; j < activeVotersArray.length; j++) {
             let removeVote = true;
-            for (let i=0; i < voters.length; i++) {
+            for (let i = 0; i < voters.length; i++) {
                 if (activeVotersArray[j].address === voters[i].address) {
                     removeVote = false;
                     break;
@@ -230,13 +230,16 @@ class Reward {
 
     async calcPercents() {
         let delegate = await dbUtils.dbGet(db, 'DELEGATE');
-        let voters = await dbUtils.dbArray(db, '1', '2');
-        let forPay = delegate.roundForged * (config.percent / 100);
-        for (let i = 0; i < voters.length; i++) {
-            voters[i].percent = (100 / delegate.vote * voters[i].balance).toFixed(2) * 1;
-            voters[i].waitPay = (voters[i].percent / 100 * forPay).toFixed(3) * 1;
-            await db.put('1x' + voters[i].address, voters[i])
+        if (delegate) {
+            let voters = await dbUtils.dbArray(db, '1', '2');
+            let forPay = delegate.roundForged * (config.percent / 100);
+            for (let i = 0; i < voters.length; i++) {
+                voters[i].percent = (100 / delegate.vote * voters[i].balance).toFixed(2) * 1;
+                voters[i].waitPay = (voters[i].percent / 100 * forPay).toFixed(3) * 1;
+                await db.put('1x' + voters[i].address, voters[i])
+            }
         }
+
     }
 
 
@@ -279,16 +282,19 @@ class Reward {
         let activeVoters = await dbUtils.dbObj(db, '1', '2');
         for (let i = 0; i < voters.length; i++) {
             if (!activeVoters['1x' + voters[i].address] && !pendingVoters['0x' + voters[i].address]) {
+                let balance = parseInt((voters[i].balance / 10 ** 8).toFixed(0));
                 /** set in pending voter **/
-                await db.put('0x' + voters[i].address, {
-                    username: voters[i].username,
-                    address: voters[i].address,
-                    publicKey: voters[i].publicKey,
-                    balance: parseInt((voters[i].balance / 10 ** 8).toFixed(0)),
-                    timestamp: Math.floor(Date.now() / 1000),
-                });
-                console.log('new pending voter', voters[i]);
-                await this.calcPercents();
+                if (balance >= config.minVote) {
+                    await db.put('0x' + voters[i].address, {
+                        username: voters[i].username,
+                        address: voters[i].address,
+                        publicKey: voters[i].publicKey,
+                        balance: balance,
+                        timestamp: Math.floor(Date.now() / 1000),
+                    });
+                    console.log('new pending voter', voters[i]);
+                    await this.calcPercents();
+                }
             }
         }
     }
@@ -425,7 +431,6 @@ router.get('/pay', async function (req, res, next) {
 router.get('/total-info', async function (req, res, next) {
     res.json(await reward.totalInfo())
 });
-
 
 
 module.exports = router;

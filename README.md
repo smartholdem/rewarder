@@ -55,7 +55,9 @@ http://host_ip:3007/
 
 ```
 cd rewarder
+sh stop.sh
 git pull
+npm install
 sh restart.sh
 ```
 
