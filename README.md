@@ -1,6 +1,4 @@
-# SmartHoldem Delegate - Automatic Rewards Voters
-
-![Rewarders](https://github.com/smartholdem/rewarder/blob/master/public/images/rewarder_screen.png)
+# SmartHoldem Delegate - Automatic Rewards Voters v2
 
 Recalculation of rewards occurs every 30 minutes.
 
@@ -167,6 +165,11 @@ result
 }
 ```
 
+### RecurrenceRule properties
+- hour (0-23)
+- date (1-31)
+- month (0-11)
+- dayOfWeek (0-6) Starting with Sunday
 
 # IMPORTANT NOTE
 

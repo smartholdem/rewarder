@@ -1,14 +1,14 @@
 {
   "node": "127.0.0.1",
-  "delegate": "delegatename",
-  "secret": "secret 12 mnemo-words from delegate address",
-  "appKey": "appSecretKey",
+  "secret": "secret passphrase delegate",
+  "secondSecret": null,
   "port": 3007,
-  "rewardPercent": 60,
-  "rewardPeriodDays": 7,
-  "rewardTime": "2:5:12",
-  "voterWeightMin": 500,
-  "log": "rewarder.log",
-  "service": true,
-  "personalPage": false
+  "percent": 50,
+  "day": 15,
+  "msg": "reward",
+  "daysPending": 3,
+  "minVote": 500,
+  "log": "reward.log",
+  "globalStatsAPI": "https://rewarder.smartholdem.io",
+  "dev": false
 }
