@@ -24,18 +24,18 @@ nano config.json
 
 ```js
 {
-  "node": "127.0.0.1", // SmartHoldem Node IP
-  "delegate": "delegatename", // Your Delegate Name
-  "secret": "secret 12 mnemo-words from delegate address", // Secret Pass Phrase Delegate for payments
-  "appKey": "appSecretKey", // Local Server Secret Key !be sure to install your
-  "port": 3007, // rewarder APP port
-  "rewardPercent": 60, // The percentage of payments from the amount of forging
-  "rewardPeriodDays": 7, // Payment period in days to voters
-  "rewardTime": "2:5:12", // H:m:s payment time, in 2 hours 5 minutes 12 sec
-  "voterWeightMin": 500, // The minimum voice weight for the calculation of payments
-  "log": "rewarder.log",
-  "service": true, // For the future front-end,
-  "personalPage": false // Show Delegate Personal Page, default - false
+    "node": "127.0.0.1", // SmartHoldem Node IP
+    "secret": "secret passphrase delegate", // Secret Pass Phrase Delegate for payments & get stats
+    "secondSecret": null,
+    "port": 3007, // rewarder APP port
+    "percent": 50, // The percentage of payments from the amount of forging
+    "day": 15, // Payment period in days to voters
+    "msg": "reward",
+    "daysPending": 3,
+    "minVote": 500, // The minimum voice weight for the calculation of payments
+    "log": "reward.log",
+    "globalStatsAPI": "https://rewarder.smartholdem.io", // global statistics api server
+    "dev": false
 }
 ```
 
