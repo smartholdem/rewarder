@@ -92,7 +92,6 @@ class Reward {
     }
 
 
-
     /** sign & send delegate stats on server statistics **/
     async sendGlobalStats() {
         let data = {
@@ -175,7 +174,7 @@ class Reward {
         /** Remove from active if unvote **/
         for (let j = 0; j < activeVotersArray.length; j++) {
             let removeVote = true;
-            for (let i=0; i < voters.length; i++) {
+            for (let i = 0; i < voters.length; i++) {
                 if (activeVotersArray[j].address === voters[i].address) {
                     removeVote = false;
                     break;
@@ -283,16 +282,19 @@ class Reward {
         let activeVoters = await dbUtils.dbObj(db, '1', '2');
         for (let i = 0; i < voters.length; i++) {
             if (!activeVoters['1x' + voters[i].address] && !pendingVoters['0x' + voters[i].address]) {
+                let balance = parseInt((voters[i].balance / 10 ** 8).toFixed(0));
                 /** set in pending voter **/
-                await db.put('0x' + voters[i].address, {
-                    username: voters[i].username,
-                    address: voters[i].address,
-                    publicKey: voters[i].publicKey,
-                    balance: parseInt((voters[i].balance / 10 ** 8).toFixed(0)),
-                    timestamp: Math.floor(Date.now() / 1000),
-                });
-                console.log('new pending voter', voters[i]);
-                await this.calcPercents();
+                if (balance >= config.minVote) {
+                    await db.put('0x' + voters[i].address, {
+                        username: voters[i].username,
+                        address: voters[i].address,
+                        publicKey: voters[i].publicKey,
+                        balance: balance,
+                        timestamp: Math.floor(Date.now() / 1000),
+                    });
+                    console.log('new pending voter', voters[i]);
+                    await this.calcPercents();
+                }
             }
         }
     }
@@ -429,7 +431,6 @@ router.get('/pay', async function (req, res, next) {
 router.get('/total-info', async function (req, res, next) {
     res.json(await reward.totalInfo())
 });
-
 
 
 module.exports = router;
