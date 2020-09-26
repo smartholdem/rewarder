@@ -313,6 +313,7 @@ class Reward {
         await this.updateVoters();
         await this.statsDelegate();
         await this.calcPercents();
+        await reward.sendGlobalStats();
     }
 
     async totalInfo() {
