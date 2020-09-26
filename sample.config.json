@@ -10,5 +10,5 @@
   "minVote": 500,
   "log": "reward.log",
   "globalStatsAPI": "https://rewarder.smartholdem.io",
-  "dev": true
+  "dev": false
 }
