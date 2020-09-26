@@ -1,12 +1,14 @@
 {
   "node": "127.0.0.1",
-  "secret": "secret 12 mnemo-words from delegate address",
+  "secret": "secret passphrase delegate",
+  "secondSecret": null,
   "port": 3007,
-  "percent": 60,
-  "day": 10,
-  "hour": 23,
-  "daysPending": 5,
+  "percent": 50,
+  "day": 15,
+  "msg": "reward",
+  "daysPending": 3,
   "minVote": 500,
   "log": "reward.log",
-  "globalStatsAPI": "http://localhost:3000"
+  "globalStatsAPI": "https://rewarder.smartholdem.io",
+  "dev": true
 }
