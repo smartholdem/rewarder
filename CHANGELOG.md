@@ -10,3 +10,4 @@ v.2
 - updated database structure
 - shell script update
 - crypto sig on auth
+- support 2n passphrase
