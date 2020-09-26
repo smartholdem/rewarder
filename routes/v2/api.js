@@ -77,6 +77,7 @@ class Reward {
         data.day = config.day;
         data.minVote = config.minVote;
         data.daysLeft = daysLeft;
+        data.daysPending = config.daysPending;
         data.port = config.port;
         data.totalForged = (await this.getForged()).forged / 10 ** 8;
 
