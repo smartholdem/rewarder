@@ -8,3 +8,4 @@ v.2
 - after the vote, voters first go to pending mode, after 3 days, if the vote has not changed, the voter is charged forging percents
 - configuration updated
 - updated database structure
+- shell script update
