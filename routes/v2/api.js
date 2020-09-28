@@ -130,6 +130,7 @@ class Reward {
         let pendingVoters = await dbUtils.dbObj(db, '0', '1'); //as objects
         let activeVoters = await dbUtils.dbObj(db, '1', '2'); //as objects
         let activeVotersArray = await dbUtils.dbArray(db, '1', '2'); // as array
+        let pendingVotersArray = await dbUtils.dbArray(db, '0', '1'); // as array
 
         for (let i = 0; i < voters.length; i++) {
             let keyPVoter = '0x' + voters[i].address;
@@ -183,6 +184,22 @@ class Reward {
             if (removeVote) {
                 console.log('remove voter', activeVotersArray[j].address);
                 await db.del('1x' + activeVotersArray[j].address);
+            }
+        }
+
+        /** Remove from pending if unvote **/
+        for (let j = 0; j < pendingVotersArray.length; j++) {
+            let removeVote = true;
+            for (let i = 0; i < voters.length; i++) {
+                if (pendingVotersArray[j].address === voters[i].address) {
+                    removeVote = false;
+                    break;
+                }
+            }
+
+            if (removeVote) {
+                console.log('remove pending voter', pendingVotersArray[j].address);
+                await db.del('0x' + pendingVotersArray[j].address);
             }
         }
 
