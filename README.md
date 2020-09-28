@@ -1,6 +1,6 @@
 # SmartHoldem Delegate - Automatic Rewards Voters v2
 
-Recalculation of rewards occurs every 30 minutes.
+![rewarder2](https://user-images.githubusercontent.com/9394904/94429798-8fdb3a80-019b-11eb-8de1-b729a77a9d6b.png)
 
 ## Install
 
