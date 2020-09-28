@@ -7,7 +7,6 @@ let config = jsonFile.readFileSync("./config.json");
 const level = require("level");
 const axios = require('axios');
 const db = level('./.db', {valueEncoding: 'json'});
-//const emitter = require('../../emitter');
 const crypto = require("crypto");
 const cryptoRandomString = require('crypto-random-string');
 const schedule = require('node-schedule');
