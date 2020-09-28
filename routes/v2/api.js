@@ -187,6 +187,22 @@ class Reward {
             }
         }
 
+        /** Remove from pending if unvote **/
+        for (let j = 0; j < pendingVotersArray.length; j++) {
+            let removeVote = true;
+            for (let i = 0; i < voters.length; i++) {
+                if (pendingVotersArray[j].address === voters[i].address) {
+                    removeVote = false;
+                    break;
+                }
+            }
+
+            if (removeVote) {
+                console.log('remove pending voter', pendingVotersArray[j].address);
+                await db.del('0x' + pendingVotersArray[j].address);
+            }
+        }
+
 
         await this.calcPercents();
 
