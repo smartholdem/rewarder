@@ -54,11 +54,9 @@ nano config.json
 sh restart.sh
 ```
 
-## Delegate Personal Page
+## Delegates Page
 
-```
-http://host_ip:3007/
-```
+https://smartholdem.io/rewarder
 
 ## Update
 
