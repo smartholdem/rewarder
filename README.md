@@ -4,8 +4,17 @@ Recalculation of rewards occurs every 30 minutes.
 
 ## Install
 
+stable version
 ```
 git clone https://github.com/smartholdem/rewarder.git
+```
+
+or latest version
+```
+git clone -b v2.0 https://github.com/smartholdem/rewarder.git
+```
+
+```
 cd rewarder
 npm install
 ```

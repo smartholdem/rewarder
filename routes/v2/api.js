@@ -252,11 +252,13 @@ class Reward {
         //if (delegate.roundForged > voters.length * 2) {
         for (let i = 0; i < voters.length; i++) {
             if (voters[i].waitPay > 1) {
-                preparedTxs.push(await this.prepareTx({
-                    amount: (voters[i].waitPay - 1).toFixed(6), // minus fee 1 STH
-                    memo: config.msg + ' ' + voters[i].percent + '% from ' + forPay + ' STH',
-                    recipient: voters[i].address,
-                }));
+                if (delegate.address !== voters[i].address) { //skip delegate address
+                    preparedTxs.push(await this.prepareTx({
+                        amount: (voters[i].waitPay - 1).toFixed(6), // minus fee 1 STH
+                        memo: config.msg + ' ' + voters[i].percent + '% from ' + forPay + ' STH',
+                        recipient: voters[i].address,
+                    }));
+                }
                 voters[i].totalPay = (voters[i].totalPay + voters[i].waitPay).toFixed(2) * 1;
                 voters[i].waitPay = 0;
                 await db.put('1x' + voters[i].address, voters[i]);
