@@ -11,4 +11,4 @@ v.2
 - shell script update
 - crypto sig on auth
 - support 2n passphrase
-- skip delegate vote
+- skip delegate address from payment
