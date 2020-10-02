@@ -13,7 +13,7 @@ const schedule = require('node-schedule');
 const DbUtils = require('../../modules/dbUtils');
 const dbUtils = new DbUtils();
 let daysLeft = -1;
-let prevBalances = [];
+let smallBalances = [];
 
 try {
     daysLeft = jsonFile.readFileSync("./daysLeft.json").days;
