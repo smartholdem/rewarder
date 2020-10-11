@@ -44,6 +44,22 @@ class Reward {
         this.options = data
     }
 
+    async chainStatus() {
+        let data = {
+            "success": false,
+            "syncing": false,
+            "blocks": 0,
+            "height": 0,
+            "id": ""
+        };
+        try {
+            data = (await axios.get('http://' + config.node + ':6100/api/loader/status/sync')).data
+        } catch (e) {
+            console.log('err:', e)
+        }
+        return data
+    }
+
     async getDelegateVoters() {
         let data = [];
         try {
