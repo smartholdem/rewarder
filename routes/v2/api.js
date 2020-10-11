@@ -13,6 +13,7 @@ const schedule = require('node-schedule');
 const DbUtils = require('../../modules/dbUtils');
 const dbUtils = new DbUtils();
 let daysLeft = -1;
+let smallBalances = [];
 
 try {
     daysLeft = jsonFile.readFileSync("./daysLeft.json").days;
@@ -43,6 +44,22 @@ class Reward {
         this.options = data
     }
 
+    async chainStatus() {
+        let data = {
+            "success": false,
+            "syncing": false,
+            "blocks": 0,
+            "height": 0,
+            "id": ""
+        };
+        try {
+            data = (await axios.get('http://' + config.node + ':6100/api/loader/status/sync')).data
+        } catch (e) {
+            console.log('err:', e)
+        }
+        return data
+    }
+
     async getDelegateVoters() {
         let data = [];
         try {
@@ -71,7 +88,7 @@ class Reward {
             console.log('err:', e)
         }
 
-        data.vote = parseInt((data.vote / 10 ** 8).toFixed(0))
+        data.vote = parseInt((data.vote / 10 ** 8).toFixed(0));
         data.percent = config.percent;
         data.day = config.day;
         data.minVote = config.minVote;
@@ -210,7 +227,7 @@ class Reward {
 
 
     async prepareTx(options) {
-        console.log(options)
+        console.log(options);
         const vendorField = options.memo ? options.memo : null;
         const version = 0x3f;
         const fee = 100000000;
@@ -225,7 +242,7 @@ class Reward {
         let result = {
             success: false,
             transactionIds: [],
-        }
+        };
         try {
             const data = await axios.post('http://' + config.node + ':6100' + '/peer/transactions', {transactions: txs}, {
                     headers: {
@@ -236,7 +253,7 @@ class Reward {
                         "port": 6100
                     },
                 }
-            )
+            );
             result = data.data
         } catch (e) {
 
@@ -263,7 +280,7 @@ class Reward {
         let delegate = await dbUtils.dbGet(db, 'DELEGATE');
         let voters = await dbUtils.dbArray(db, '1', '2');
         let forPay = delegate.roundForged * (config.percent / 100);
-        console.log('forPay', forPay)
+        console.log('forPay', forPay);
         let preparedTxs = [];
         //if (delegate.roundForged > voters.length * 2) {
         for (let i = 0; i < voters.length; i++) {
@@ -347,7 +364,8 @@ class Reward {
             voters: {
                 pending: await dbUtils.dbArray(db, '0', '1'),
                 active: await dbUtils.dbArray(db, '1', '2'),
-            }
+            },
+            chain: await this.chainStatus()
         }
     }
 
@@ -449,6 +467,11 @@ router.get('/pay', async function (req, res, next) {
 router.get('/total-info', async function (req, res, next) {
     res.json(await reward.totalInfo())
 });
+
+router.get('/chain-status', async function (req, res, next) {
+    res.json(await reward.chainStatus())
+});
+
 
 
 module.exports = router;
