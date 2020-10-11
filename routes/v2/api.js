@@ -467,5 +467,10 @@ router.get('/total-info', async function (req, res, next) {
     res.json(await reward.totalInfo())
 });
 
+router.get('/chain-status', async function (req, res, next) {
+    res.json(await reward.chainStatus())
+});
+
+
 
 module.exports = router;
