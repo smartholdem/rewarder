@@ -13,7 +13,9 @@ const schedule = require('node-schedule');
 const DbUtils = require('../../modules/dbUtils');
 const dbUtils = new DbUtils();
 let daysLeft = -1;
-let smallBalances = [];
+const version = jsonFile.readFileSync("./package.json").version;
+
+console.log('version', version);
 
 try {
     daysLeft = jsonFile.readFileSync("./daysLeft.json").days;
@@ -360,6 +362,7 @@ class Reward {
     async totalInfo() {
         return {
             status: true,
+            version: version,
             delegate: await dbUtils.dbGet(db, 'DELEGATE'),
             voters: {
                 pending: await dbUtils.dbArray(db, '0', '1'),
