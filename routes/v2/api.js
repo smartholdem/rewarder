@@ -331,6 +331,8 @@ class Reward {
                     });
                     console.log('new pending voter', voters[i]);
                     await this.calcPercents();
+                } else {
+                    await db.del('0x' + voters[i].address);
                 }
             }
         }
