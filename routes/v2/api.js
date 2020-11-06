@@ -281,7 +281,7 @@ class Reward {
     async runPayments() {
         const delegate = await dbUtils.dbGet(db, 'DELEGATE');
         let voters = await dbUtils.dbArray(db, '1', '2');
-        const forPay = (delegate.roundForged * (config.percent / 100)).toFixed(2);
+        const forPay = (delegate.roundForged * (config.percent / 100)).toFixed(2) * 1;
         console.log('forPay', forPay);
         let preparedTxs = [];
         //if (delegate.roundForged > voters.length * 2) {
@@ -303,7 +303,7 @@ class Reward {
         let successTxs = [];
         if (voters.length) {
             successTxs = await this.broadcastTxs(preparedTxs);
-            delegate.totalPayout = delegate.totalPayout + forPay;
+            delegate.totalPayout = (delegate.totalPayout * 1) + (forPay * 1);
             delegate.startForged = delegate.totalForged;
             delegate.roundForged = 0;
             await db.put('DELEGATE', delegate);
