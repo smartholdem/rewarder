@@ -319,7 +319,11 @@ class Reward {
     }
 
     async cronVoters() {
-        let voters = await this.getDelegateVoters();
+        const voters = await this.getDelegateVoters();
+        if (!voters) {
+            console.log('err: voters not found');
+            return;
+        }
         let pendingVoters = await dbUtils.dbObj(db, '0', '1');
         let activeVoters = await dbUtils.dbObj(db, '1', '2');
         for (let i = 0; i < voters.length; i++) {

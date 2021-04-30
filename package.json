@@ -1,6 +1,6 @@
 {
   "name": "rewarder",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "SmartHoldem Delegate Automatic Rewards for Voters",
   "author": "TechnoL0g <technolog@smartholdem.io>",
   "private": true,
@@ -8,7 +8,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "bignumber.js": "^7.2.1",
     "cookie-parser": "~1.4.3",
     "crypto-random-string": "^3.3.0",
