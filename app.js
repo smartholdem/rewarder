@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+//const logger = require('morgan');
 const jsonFile = require('jsonfile');
 const appConfig = jsonFile.readFileSync('./config.json'); // конфиг
 
@@ -12,7 +12,7 @@ const apiRouter = require('./routes/v2/api');
 
 const app = express();
 app.disable('x-powered-by');
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
