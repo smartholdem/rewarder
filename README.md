@@ -1,15 +1,17 @@
-# SmartHoldem Delegate - Automatic Rewards Voters v2
+ENGLISH https://github.com/smartholdem/rewarder/blob/v2.0/README_EN.md
+
+## SmartHoldem Delegate Rewarder - Автоматическое вознаграждение избирателей
 
 ![rewarder2](https://user-images.githubusercontent.com/9394904/94429798-8fdb3a80-019b-11eb-8de1-b729a77a9d6b.png)
 
-## Install
+## Установка
 
-stable version
+Стабильная версия
 ```
 git clone https://github.com/smartholdem/rewarder.git
 ```
 
-or latest version
+или установить последнюю версию
 ```
 git clone -b v2.0 https://github.com/smartholdem/rewarder.git
 ```
@@ -19,46 +21,46 @@ cd rewarder
 npm install
 ```
 
-## Settings
+## Настройки
 
 
-1. Rename sample.config.json > config.json and set params
+1. Переименовать sample.config.json > config.json и установить параметры в конфиге
 
 ```
 mv sample.config.json config.json
 nano config.json
 ```
 
-2. Config Params
+2. Конфигурация
 
 ```js
 {
-    "node": "127.0.0.1", // SmartHoldem Node IP
-    "secret": "secret passphrase delegate", // Secret Pass Phrase Delegate for payments & get stats
+    "node": "127.0.0.1", // SmartHoldem Адрес узла, по умолчанию 127.0.0.1
+    "secret": "secret passphrase delegate", // секретная фраза делегата
     "secondSecret": null,
-    "port": 3007, // rewarder APP port
-    "percent": 50, // The percentage of payments from the amount of forging
-    "day": 15, // Payment period in days to voters
-    "msg": "reward",
+    "port": 3007, // порт приложения
+    "percent": 50, // процент выплат вознаграждений избирателям от форжинга
+    "day": 15, // период выплат избирателям
+    "msg": "reward", // ообщение избирателям
     "daysPending": 3,
-    "minVote": 500, // The minimum voice weight for the calculation of payments
+    "minVote": 500, // минимальная сумма голоса, которая будет учитываться в выплатах
     "log": "reward.log",
-    "globalStatsAPI": "https://rewarder.smartholdem.io", // global statistics api server
+    "globalStatsAPI": "https://rewarder.smartholdem.io", // сервер глобальной статистики, необходим для отображения делегата в https://smartholdem.io/rewarder
     "dev": false
 }
 ```
 
-## Run
+## Запуск
 
 ```
 sh restart.sh
 ```
 
-## Delegates Page
+## Страница делегатов
 
 https://smartholdem.io/rewarder
 
-## Update
+## Обновление
 
 ```
 cd rewarder
@@ -68,8 +70,9 @@ npm install
 sh restart.sh
 ```
 
-## Public API
+## Публичный API
 
+в разработке..
 
 # IMPORTANT NOTE
 
