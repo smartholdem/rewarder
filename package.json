@@ -1,6 +1,6 @@
 {
   "name": "rewarder",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "SmartHoldem Delegate Automatic Rewards for Voters",
   "author": "TechnoL0g <technolog@smartholdem.io>",
   "private": true,
