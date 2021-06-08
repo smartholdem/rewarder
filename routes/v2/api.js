@@ -290,7 +290,7 @@ class Reward {
                 if (delegate.address !== voters[i].address) { //skip delegate address
                     preparedTxs.push(await this.prepareTx({
                         amount: (voters[i].waitPay - 1).toFixed(6), // minus fee 1 STH
-                        memo: config.msg + ' ' + voters[i].percent + '% from ' + forPay + ' STH',
+                        memo: config.msg, // + ' ' + voters[i].percent + '% from ' + forPay + ' STH',
                         recipient: voters[i].address,
                     }));
                 }
